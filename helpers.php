@@ -19,9 +19,6 @@ function basePath($path = '') {
 function loadView($name) {
   $viewPath = basePath("views/{$name}.view.php");
 
-  inspectValueAndDie($name);
-  inspectValue($viewPath);
-
   if (file_exists($viewPath)) {
     require $viewPath;
   } else {
