@@ -14,18 +14,37 @@ class Database {
             dbname={$config['dbname']}";
 
     $options = [
-      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+      PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ];
 
     try {
       $this->conn = new PDO(
         $dsn,
         $config['username'],
-        $config['password']
+        $config['password'],
+        $options
       );
     } catch (PDOException $e) {
       throw new Exception("Database connection failed:
                           {$e->getMessage()}");
+    }
+  }
+
+  /**
+   * Query the db
+   * 
+   * @param string $query
+   * @return PDOStatement
+   * @throws PDOException
+   */
+  public function query($query) {
+    try {
+      $sth = $this->conn->prepare($query);
+      $sth->execute();
+      return $sth;
+    } catch (PDOException $e) {
+      throw new Exception("Query filed to execute: {$e->getMessage()}");
     }
   }
 }
