@@ -6,7 +6,6 @@ CREATE TABLE `listings` (
   `salary` varchar(45) DEFAULT NULL,
   `tags` varchar(255) DEFAULT NULL,
   `company` varchar(45) DEFAULT NULL,
-  `category` varchar(45) DEFAULT NULL,
   `adress` varchar(255) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
   `country` varchar(45) DEFAULT NULL,
@@ -15,7 +14,11 @@ CREATE TABLE `listings` (
   `requirements` longtext,
   `benefits` longtext,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `category_id` int DEFAULT NULL,
+  `employment_type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_listings_users` (`user_id`),
+  KEY `fk_listings_categories` (`category_id`),
+  CONSTRAINT `fk_listings_categories` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
   CONSTRAINT `fk_listings_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci
+) ENGINE = InnoDB AUTO_INCREMENT = 28 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci

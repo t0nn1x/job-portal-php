@@ -2,8 +2,6 @@
 
 <?php loadPartial('navbar') ?>
 
-<?php loadPartial('search') ?>
-
-<?php loadPartial('listing', ['listings' => $listings]) ?>
+<?php loadPartial('jobDetails') ?>
 
 <?php loadPartial('footer') ?>

@@ -45,7 +45,6 @@
             </div>
           <?php endforeach; ?>
         </div>
-        <a class="btn btn-primary py-3 px-5" href="/listings">Browse More Jobs</a>
       </div>
     </div>
   </div>
