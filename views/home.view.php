@@ -10,6 +10,6 @@
 
 <?php loadPartial('about') ?>
 
-<?php loadPartial('jobs') ?>
+<?php loadPartial('jobs', ['listings' => $listings]) ?>
 
 <?php loadPartial('footer') ?>

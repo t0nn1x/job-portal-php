@@ -4,6 +4,6 @@
 
 <?php loadPartial('search') ?>
 
-<?php loadPartial('jobs') ?>
+<?php loadPartial('listing', ['listings' => $listings]) ?>
 
 <?php loadPartial('footer') ?>
