@@ -1,0 +1,16 @@
+{
+  "name": "t0nn1x/job-portal-php",
+  "description": "Job listing application",
+  "authors": [
+    {
+      "name": "Anton Khrobust",
+      "email": "khrobust.letswork@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Framework\\": "Framework/",
+      "App\\": "App/"
+    }
+  }
+}

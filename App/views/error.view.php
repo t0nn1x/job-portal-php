@@ -2,6 +2,6 @@
 
 <?php loadPartial('navbar') ?>
 
-<?php loadPartial('404')?>
+<?php loadPartial('error', ['status' => $status, 'message' => $message]) ?>
 
 <?php loadPartial('footer') ?>

@@ -1,5 +1,9 @@
 <?php
 
+namespace Framework;
+
+use App\Controllers\ErrorController;
+
 class Router {
   protected $routes = [];
 
@@ -8,14 +12,21 @@ class Router {
    *
    * @param string $method
    * @param string $uri
-   * @param string $controller
+   * @param string $action
    * @return void
    */
-  public function registerRoute($method, $uri, $controller) {
+  public function registerRoute($method, $uri, $action) {
+    list($controller, $controllerMethod) = explode('@', $action);
+
+    $uriPattern = preg_replace('/{([^}]+)}/', '(?P<$1>[^/]+)', $uri);
+    $uriPattern = '#^' . $uriPattern . '$#';
+
     $this->routes[] = [
       'method' => $method,
+      'uri_pattern' => $uriPattern,
       'uri' => $uri,
-      'controller' => $controller
+      'controller' => $controller,
+      'controllerMethod' => $controllerMethod
     ];
   }
 
@@ -64,18 +75,6 @@ class Router {
   }
 
   /**
-   * Load error page
-   * 
-   * @param int $httpCode
-   * @return void
-   */
-  public function error($httpCode = 404) {
-    http_response_code($httpCode);
-    loadView("error/{$httpCode}");
-    exit;
-  }
-
-  /**
    * Route the request
    * 
    * @param string $uri
@@ -84,12 +83,27 @@ class Router {
    */
   public function route($uri, $method) {
     foreach ($this->routes as $route) {
-      if ($route['uri'] === $uri && $route['method'] === $method) {
-        require basePath($route['controller']);
+      if ($route['method'] === $method && preg_match($route['uri_pattern'], $uri, $matches)) {
+        // Extract controller and controller method
+        $controller = 'App\\Controllers\\' . $route['controller'];
+        $controllerMethod = $route['controllerMethod'];
+
+        // Instantiate the controller
+        $controllerInstance = new $controller();
+
+        // Remove numeric keys from matches
+        foreach ($matches as $key => $match) {
+          if (is_int($key)) {
+            unset($matches[$key]);
+          }
+        }
+
+        // Call the method with parameters
+        call_user_func_array([$controllerInstance, $controllerMethod], $matches);
         return;
       }
     }
 
-    $this->error();
+    ErrorController::notFound();
   }
 }
