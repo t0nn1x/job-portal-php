@@ -18,8 +18,12 @@ class Router {
   public function registerRoute($method, $uri, $action) {
     list($controller, $controllerMethod) = explode('@', $action);
 
+    $uriPattern = preg_replace('/{([^}]+)}/', '(?P<$1>[^/]+)', $uri);
+    $uriPattern = '#^' . $uriPattern . '$#';
+
     $this->routes[] = [
       'method' => $method,
+      'uri_pattern' => $uriPattern,
       'uri' => $uri,
       'controller' => $controller,
       'controllerMethod' => $controllerMethod
@@ -79,14 +83,23 @@ class Router {
    */
   public function route($uri, $method) {
     foreach ($this->routes as $route) {
-      if ($route['uri'] === $uri && $route['method'] === $method) {
+      if ($route['method'] === $method && preg_match($route['uri_pattern'], $uri, $matches)) {
         // Extract controller and controller method
         $controller = 'App\\Controllers\\' . $route['controller'];
         $controllerMethod = $route['controllerMethod'];
 
-        // Instantiate the controller and call the method
+        // Instantiate the controller
         $controllerInstance = new $controller();
-        $controllerInstance->$controllerMethod();
+
+        // Remove numeric keys from matches
+        foreach ($matches as $key => $match) {
+          if (is_int($key)) {
+            unset($matches[$key]);
+          }
+        }
+
+        // Call the method with parameters
+        call_user_func_array([$controllerInstance, $controllerMethod], $matches);
         return;
       }
     }
