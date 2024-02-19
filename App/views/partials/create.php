@@ -1,10 +1,18 @@
 <div class="container">
   <h2>Create Job Listing</h2>
-  <form action="PATH_TO_SUBMISSION_SCRIPT" method="POST">
+  <form action="/listings" method="POST">
     <h3>Job Info:</h3>
     <div class="form-group">
       <label for="jobTitle">Job Title</label>
       <input type="text" class="form-control" id="jobTitle" name="jobTitle" required>
+    </div>
+    <div class="form-group">
+      <label for="employmentType">Employment Type</label>
+      <select class="form-control" id="employmentType" name="employmentType" required>
+        <option value="remote">Remote</option>
+        <option value="full-time">Full Time</option>
+        <option value="part-time">Part Time</option>
+      </select>
     </div>
     <div class="form-group">
       <label for="jobCategory">Job Category</label>
@@ -12,7 +20,8 @@
     </div>
     <div class="form-group">
       <label for="description">Job Description</label>
-      <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+      <div id="description" class="form-control" style="height: 150px;"></div>
+      <input type="hidden" name="description" id="hiddenDescription">
     </div>
     <div class="form-group">
       <label for="annualSalary">Annual Salary</label>
@@ -20,11 +29,13 @@
     </div>
     <div class="form-group">
       <label for="requirements">Requirements</label>
-      <textarea class="form-control" id="requirements" name="requirements" rows="5" required></textarea>
+      <div id="requirements" class="form-control" style="height: 150px;"></div>
+      <input type="hidden" name="requirements" id="hiddenRequirements">
     </div>
     <div class="form-group">
       <label for="benefits">Benefits</label>
-      <textarea class="form-control" id="benefits" name="benefits" rows="5" required></textarea>
+      <div id="benefits" class="form-control" style="height: 150px;"></div>
+      <input type="hidden" name="benefits" id="hiddenBenefits">
     </div>
 
     <h3>Company Info & Location:</h3>
@@ -41,8 +52,8 @@
       <input type="text" class="form-control" id="city" name="city" required>
     </div>
     <div class="form-group">
-      <label for="state">State</label>
-      <input type="text" class="form-control" id="state" name="state" required>
+      <label for="state">Country</label>
+      <input type="text" class="form-control" id="country" name="country" required>
     </div>
     <div class="form-group">
       <label for="phone">Phone</label>
@@ -55,4 +66,23 @@
 
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+  <script>
+    var quillDescription = new Quill('#description', {
+      theme: 'snow'
+    });
+
+    var quillRequirements = new Quill('#requirements', {
+      theme: 'snow'
+    });
+
+    var quillBenefits = new Quill('#benefits', {
+      theme: 'snow'
+    });
+
+    document.querySelector('form').onsubmit = function() {
+      document.getElementById('hiddenDescription').value = quillDescription.root.innerHTML;
+      document.getElementById('hiddenRequirements').value = quillRequirements.root.innerHTML;
+      document.getElementById('hiddenBenefits').value = quillBenefits.root.innerHTML;
+    };
+  </script>
 </div>

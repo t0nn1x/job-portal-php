@@ -53,4 +53,26 @@ class ListingController {
 
     loadView('listings/show', ['listing' => $listing]);
   }
+
+  /**
+   * Store data in db
+   *
+   * @return void
+   */
+  public function store() {
+    $allowedFields = [
+      'jobTitle', 'employmentType',
+      'jobCategory', 'description', 'annualSalary',
+      'requirements', 'benefits', 'companyName', 'address',
+      'city', 'country', 'phone', 'email'
+    ];
+
+    $newListingData = array_intersect_key($_POST, array_flip($allowedFields));
+
+    $newListingData['user_id'] = 1;
+
+    $newListingData = array_map('sanitize', $newListingData);
+
+    inspectValueAndDie($newListingData);
+  }
 }
