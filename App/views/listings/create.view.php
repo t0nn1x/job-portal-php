@@ -3,7 +3,9 @@
 <?php loadPartial('navbar') ?>
 
 <div class="container">
-  <h2 style="text-align: center;">Create Job Listing</h2>
+  <div style="text-align: center;">
+    <h2>Create Job Listing</h2>
+  </div>
   <form action="/listings" method="POST">
     <h3>Job Info:</h3>
     <?php if (isset($errors)) : ?>
@@ -31,8 +33,7 @@
     </div>
     <div class="form-group">
       <label for="description">Job Description</label>
-      <div id="description" class="form-control" style="height: 150px;"></div>
-      <input type="hidden" name="description" id="hiddenDescription">
+      <textarea class="form-control" id="description" name="description" required style="height: 150px;"></textarea>
     </div>
     <div class="form-group">
       <label for="annualSalary">Annual Salary</label>
@@ -40,13 +41,11 @@
     </div>
     <div class="form-group">
       <label for="requirements">Requirements</label>
-      <div id="requirements" class="form-control" style="height: 150px;"></div>
-      <input type="hidden" name="requirements" id="hiddenRequirements">
+      <textarea class="form-control" id="requirements" name="requirements" required style="height: 150px;"></textarea>
     </div>
     <div class="form-group">
       <label for="benefits">Benefits</label>
-      <div id="benefits" class="form-control" style="height: 150px;"></div>
-      <input type="hidden" name="benefits" id="hiddenBenefits">
+      <textarea class="form-control" id="benefits" name="benefits" required style="height: 150px;"></textarea>
     </div>
 
     <h3>Company Info & Location:</h3>
@@ -77,26 +76,8 @@
 
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
-  <script>
-    var quillDescription = new Quill('#description', {
-      theme: 'snow'
-    });
-
-    var quillRequirements = new Quill('#requirements', {
-      theme: 'snow'
-    });
-
-    var quillBenefits = new Quill('#benefits', {
-      theme: 'snow'
-    });
-
-    document.querySelector('form').onsubmit = function() {
-      document.getElementById('hiddenDescription').value = quillDescription.root.innerHTML;
-      document.getElementById('hiddenRequirements').value = quillRequirements.root.innerHTML;
-      document.getElementById('hiddenBenefits').value = quillBenefits.root.innerHTML;
-    };
-  </script>
 </div>
+
 
 
 <?php loadPartial('footer') ?>
