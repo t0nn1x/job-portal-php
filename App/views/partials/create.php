@@ -11,7 +11,7 @@
     <?php endif; ?>
     <div class="form-group">
       <label for="jobTitle">Job Title</label>
-      <input type="text" class="form-control" id="jobTitle" name="jobTitle">
+      <input type="text" class="form-control" id="jobTitle" name="jobTitle" required>
     </div>
     <div class="form-group">
       <label for="employmentType">Employment Type</label>

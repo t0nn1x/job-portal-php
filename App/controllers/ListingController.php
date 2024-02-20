@@ -74,7 +74,7 @@ class ListingController {
     $newListingData = array_map('sanitize', $newListingData);
 
     $requiredFields = [
-      'title', 'description', 'email', 'country', 'city'
+      'jobTitle', 'description', 'email', 'country', 'city'
     ];
 
     $errors = [];
@@ -88,8 +88,7 @@ class ListingController {
     if(!empty($errors)) {
       // Reload view with errors 
       loadView('listings/create', [
-        'errors' => $errors,
-        'listings' => $newListingData
+        'errors' => $errors
       ]);
     } else {
       // Submit data
