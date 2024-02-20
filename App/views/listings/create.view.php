@@ -28,8 +28,8 @@
       </select>
     </div>
     <div class="form-group">
-      <label for="jobCategory">Job Category</label>
-      <input type="text" class="form-control" id="jobCategory" name="jobCategory" required>
+      <label for="jobCategory">Tags</label>
+      <input type="text" class="form-control" id="tags" name="tags" required>
     </div>
     <div class="form-group">
       <label for="description">Job Description</label>

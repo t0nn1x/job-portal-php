@@ -62,7 +62,7 @@ class ListingController {
   public function store() {
     $allowedFields = [
       'jobTitle', 'employmentType',
-      'jobCategory', 'description', 'annualSalary',
+      'tags', 'description', 'annualSalary',
       'requirements', 'benefits', 'companyName', 'address',
       'city', 'country', 'phone', 'email'
     ];
@@ -74,25 +74,57 @@ class ListingController {
     $newListingData = array_map('sanitize', $newListingData);
 
     $requiredFields = [
-      'jobTitle', 'description', 'email', 'country', 'city'
+      'jobTitle', 'description', 'email', 'country', 'city', 'salary'
     ];
 
     $errors = [];
 
     foreach ($requiredFields as $field) {
-      if (empty($newListingData[$field]) || !Validation::string($newListingData[$field])){
+      if (empty($newListingData[$field]) || !Validation::string($newListingData[$field])) {
         $errors[$field] = ucfirst($field) . ' is required';
       };
     }
 
-    if(!empty($errors)) {
+    if (!empty($errors)) {
       // Reload view with errors 
       loadView('listings/create', [
-        'errors' => $errors
+        'errors' => $errors,
+        'listing' => $newListingData
       ]);
     } else {
-      // Submit data
-      echo 'success';
+      // Prepare the insert query with placeholders for the actual values
+      $sql = 'INSERT INTO listings (
+      user_id, title, description, salary, tags,
+      company, address, city, country, phone, email,
+      requirements, benefits, employment_type
+    ) VALUES (
+      :user_id, :title, :description, :salary, :tags,
+      :company, :address, :city, :country, :phone, :email,
+      :requirements, :benefits, :employment_type
+    )';
+
+      // Prepare an array to bind the actual values to the placeholders
+      $bindings = [
+        'user_id' => $newListingData['user_id'],
+        'title' => $newListingData['jobTitle'],
+        'description' => $newListingData['description'],
+        'salary' => $newListingData['annualSalary'],
+        'tags' => $newListingData['tags'],
+        'company' => $newListingData['companyName'],
+        'address' => $newListingData['address'],
+        'city' => $newListingData['city'],
+        'country' => $newListingData['country'],
+        'phone' => $newListingData['phone'],
+        'email' => $newListingData['email'],
+        'requirements' => $newListingData['requirements'],
+        'benefits' => $newListingData['benefits'],
+        'employment_type' => $newListingData['employmentType']
+      ];
+
+      // Execute the query with the bindings
+      $this->db->query($sql, $bindings);
+
+      redirect('/listings');
     }
   }
 }

@@ -6,7 +6,7 @@ CREATE TABLE `listings` (
   `salary` varchar(45) DEFAULT NULL,
   `tags` varchar(255) DEFAULT NULL,
   `company` varchar(45) DEFAULT NULL,
-  `adress` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
   `country` varchar(45) DEFAULT NULL,
   `phone` varchar(45) DEFAULT NULL,
