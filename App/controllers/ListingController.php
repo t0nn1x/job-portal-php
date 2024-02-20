@@ -40,26 +40,25 @@ class ListingController {
    *
    * @return void
    */
-  public function show($id = null) {
+  public function store() {
+    $newListingData = $this->getNewListingData();
 
-    $params = ['id' => $id];
+    $errors = $this->validateListingData($newListingData);
 
-    $listing = $this->db->query('SELECT * FROM listings WHERE id = :id', $params)->fetch();
-
-    if (!$listing) {
-      ErrorController::notFound('Listing not found.');
-      return;
+    if (!empty($errors)) {
+      $this->showCreateViewWithErrors($errors, $newListingData);
+    } else {
+      $this->insertListingData($newListingData);
+      redirect('/listings');
     }
-
-    loadView('listings/show', ['listing' => $listing]);
   }
 
   /**
-   * Store data in db
+   * Get the new listing data from the request
    *
-   * @return void
+   * @return array
    */
-  public function store() {
+  private function getNewListingData() {
     $allowedFields = [
       'jobTitle', 'employmentType',
       'tags', 'description', 'annualSalary',
@@ -73,8 +72,18 @@ class ListingController {
 
     $newListingData = array_map('sanitize', $newListingData);
 
+    return $newListingData;
+  }
+
+  /**
+   * Validate the new listing data
+   *
+   * @param array $newListingData
+   * @return array
+   */
+  private function validateListingData($newListingData) {
     $requiredFields = [
-      'jobTitle', 'description', 'email', 'country', 'city', 'salary'
+      'jobTitle', 'description', 'email', 'country', 'city', 'annualSalary'
     ];
 
     $errors = [];
@@ -85,15 +94,31 @@ class ListingController {
       };
     }
 
-    if (!empty($errors)) {
-      // Reload view with errors 
-      loadView('listings/create', [
-        'errors' => $errors,
-        'listing' => $newListingData
-      ]);
-    } else {
-      // Prepare the insert query with placeholders for the actual values
-      $sql = 'INSERT INTO listings (
+    return $errors;
+  }
+
+  /**
+   * Show the create view with errors
+   *
+   * @param array $errors
+   * @param array $listingData
+   * @return void
+   */
+  private function showCreateViewWithErrors($errors, $listingData) {
+    loadView('listings/create', [
+      'errors' => $errors,
+      'listing' => $listingData
+    ]);
+  }
+
+  /**
+   * Insert the new listing data into the database
+   *
+   * @param array $newListingData
+   * @return void
+   */
+  private function insertListingData($newListingData) {
+    $sql = 'INSERT INTO listings (
       user_id, title, description, salary, tags,
       company, address, city, country, phone, email,
       requirements, benefits, employment_type
@@ -103,28 +128,43 @@ class ListingController {
       :requirements, :benefits, :employment_type
     )';
 
-      // Prepare an array to bind the actual values to the placeholders
-      $bindings = [
-        'user_id' => $newListingData['user_id'],
-        'title' => $newListingData['jobTitle'],
-        'description' => $newListingData['description'],
-        'salary' => $newListingData['annualSalary'],
-        'tags' => $newListingData['tags'],
-        'company' => $newListingData['companyName'],
-        'address' => $newListingData['address'],
-        'city' => $newListingData['city'],
-        'country' => $newListingData['country'],
-        'phone' => $newListingData['phone'],
-        'email' => $newListingData['email'],
-        'requirements' => $newListingData['requirements'],
-        'benefits' => $newListingData['benefits'],
-        'employment_type' => $newListingData['employmentType']
-      ];
+    $bindings = [
+      'user_id' => $newListingData['user_id'],
+      'title' => $newListingData['jobTitle'],
+      'description' => $newListingData['description'],
+      'salary' => $newListingData['annualSalary'],
+      'tags' => $newListingData['tags'],
+      'company' => $newListingData['companyName'],
+      'address' => $newListingData['address'],
+      'city' => $newListingData['city'],
+      'country' => $newListingData['country'],
+      'phone' => $newListingData['phone'],
+      'email' => $newListingData['email'],
+      'requirements' => $newListingData['requirements'],
+      'benefits' => $newListingData['benefits'],
+      'employment_type' => $newListingData['employmentType']
+    ];
 
-      // Execute the query with the bindings
-      $this->db->query($sql, $bindings);
+    $this->db->query($sql, $bindings);
+  }
 
-      redirect('/listings');
+  /**
+   * Show a specific listing
+   *
+   * @param int|null $id
+   * @return void
+   */
+  public function show($id = null) {
+    $params = ['id' => $id];
+
+    $listing = $this->db->query('SELECT * FROM listings WHERE id = :id', $params)->fetch();
+
+    if (!$listing) {
+      ErrorController::notFound('Listing not found.');
+      return;
     }
+
+    loadView('listings/show', ['listing' => $listing]);
   }
 }
+  
