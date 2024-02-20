@@ -93,6 +93,7 @@ class ListingController {
       ]);
     } else {
       // Submit data
+      echo 'success';
     }
   }
 }

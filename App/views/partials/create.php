@@ -4,12 +4,14 @@
     <h3>Job Info:</h3>
     <?php if (isset($errors)) : ?>
       <?php foreach ($errors as $error) : ?>
-        <div class="message bg-red-100 my-3"><?= $error ?></div>
+        <div class="message bg-red-100 my-3" style="color: red; background-color: #f8d7da; border-color: #f5c6cb; padding: 10px; border: 1px solid transparent; border-radius: 0.25rem;">
+          <?= $error ?>
+        </div>
       <?php endforeach ?>
     <?php endif; ?>
     <div class="form-group">
       <label for="jobTitle">Job Title</label>
-      <input type="text" class="form-control" id="jobTitle" name="jobTitle" required>
+      <input type="text" class="form-control" id="jobTitle" name="jobTitle">
     </div>
     <div class="form-group">
       <label for="employmentType">Employment Type</label>
