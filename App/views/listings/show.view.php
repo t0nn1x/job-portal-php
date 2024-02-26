@@ -60,7 +60,7 @@
           <p><i class="fa fa-angle-right text-primary me-2"></i>Vacancy: <?= $listing->id ?> position</p>
           <p><i class="fa fa-angle-right text-primary me-2"></i>Job Nature: <?= $listing->employment_type ?></p>
           <p><i class="fa fa-angle-right text-primary me-2"></i>Salary: <?= formatSalary($listing->salary) ?></p>
-          <p><i class="fa fa-angle-right text-primary me-2"></i>Adress: <?= $listing->adress ?></p>
+          <p><i class="fa fa-angle-right text-primary me-2"></i>Adress: <?= $listing->address ?></p>
         </div>
         <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
           <h4 class="mb-4">Company email:</h4>
