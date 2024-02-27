@@ -166,5 +166,19 @@ class ListingController {
 
     loadView('listings/show', ['listing' => $listing]);
   }
+
+  /**
+   * Delete a specific listing
+   *
+   * @param int $id
+   * @return void
+   */
+  public function destroy($id) {
+    // Perform the delete operation
+    $this->db->query('DELETE FROM listings WHERE id = :id', ['id' => $id]);
+
+    echo json_encode(['success' => true]);
+    return;
+  }
 }
   

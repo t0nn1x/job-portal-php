@@ -65,11 +65,32 @@
         <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
           <h4 class="mb-4">Company email:</h4>
           <p><i class="fa fa-angle-right text-primary me-2"></i><?= $listing->email ?></p>
+          <button onclick="deleteListing(<?= $listing->id ?>)" class="btn btn-danger">Delete</button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  function deleteListing(listingId) {
+    if (confirm('Are you sure you want to delete this listing?')) {
+      fetch('/listings/' + listingId, {
+        method: 'DELETE'
+      }).then(response => {
+        if (response.ok) {
+          window.location.href = '/listings?status=deleted';
+        } else {
+          alert('Error deleting listing');
+        }
+      }).catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting listing');
+      });
+    }
+  }
+</script>
+
 <!-- Job Detail End -->
 
 
