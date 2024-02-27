@@ -177,6 +177,9 @@ class ListingController {
     // Perform the delete operation
     $this->db->query('DELETE FROM listings WHERE id = :id', ['id' => $id]);
 
+    // Set flash message
+    $_SESSION['success_message'] = 'Listing deleted successfully';
+
     echo json_encode(['success' => true]);
     return;
   }
