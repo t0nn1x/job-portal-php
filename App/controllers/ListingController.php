@@ -183,5 +183,21 @@ class ListingController {
     echo json_encode(['success' => true]);
     return;
   }
+
+  /**
+   * Show the listing edit form
+   * 
+   * @param int $id
+   * @return void
+   */
+  public function edit($id) {
+    $listing = $this->db->query('SELECT * FROM listings WHERE id = :id', ['id' => $id])->fetch();
+
+    if (!$listing) {
+      ErrorController::notFound('Listing not found.');
+      return;
+    }
+
+    loadView('listings/edit', ['listing' => $listing]);
+  }
 }
-  

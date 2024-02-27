@@ -4,7 +4,9 @@
 
 <div class="container">
   <div style="text-align: center;">
+    <p>
     <h2>Create Job Listing</h2>
+    </p>
   </div>
   <form action="/listings" method="POST">
     <h3>Job Info:</h3>
@@ -73,6 +75,7 @@
       <label for="email">Email</label>
       <input type="email" class="form-control" id="email" name="email" required>
     </div>
+    <p></p>
 
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
