@@ -201,4 +201,73 @@ class ListingController {
 
     loadView('listings/edit', ['listing' => $listing]);
   }
+
+    /**
+     * Update a specific listing
+     *
+     * @param int $id
+     * @return void
+     */
+    public function update($id) {
+        $listingData = $this->getNewListingData();
+
+        $errors = $this->validateListingData($listingData);
+
+        if (!empty($errors)) {
+            $this->showEditViewWithErrors($errors, $listingData, $id);
+        } else {
+            $this->updateListingData($listingData, $id);
+            redirect('/listings/' . $id);
+        }
+    }
+
+    /**
+     * Show the edit view with errors
+     *
+     * @param array $errors
+     * @param array $listingData
+     * @param int $id
+     * @return void
+     */
+    private function showEditViewWithErrors($errors, $listingData, $id) {
+        $listingData['id'] = $id;
+        loadView('listings/edit', [
+            'errors' => $errors,
+            'listing' => (object) $listingData
+        ]);
+    }
+
+    /**
+     * Update the listing data in the database
+     *
+     * @param array $listingData
+     * @param int $id
+     * @return void
+     */
+    private function updateListingData($listingData, $id) {
+        $sql = 'UPDATE listings SET
+    title = :title, description = :description, salary = :salary, tags = :tags,
+    company = :company, address = :address, city = :city, country = :country, phone = :phone, email = :email,
+    requirements = :requirements, benefits = :benefits, employment_type = :employment_type
+    WHERE id = :id';
+
+        $bindings = [
+            'id' => $id,
+            'title' => $listingData['jobTitle'],
+            'description' => $listingData['description'],
+            'salary' => $listingData['annualSalary'],
+            'tags' => $listingData['tags'],
+            'company' => $listingData['companyName'],
+            'address' => $listingData['address'],
+            'city' => $listingData['city'],
+            'country' => $listingData['country'],
+            'phone' => $listingData['phone'],
+            'email' => $listingData['email'],
+            'requirements' => $listingData['requirements'],
+            'benefits' => $listingData['benefits'],
+            'employment_type' => $listingData['employmentType']
+        ];
+
+        $this->db->query($sql, $bindings);
+    }
 }
