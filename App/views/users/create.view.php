@@ -15,20 +15,20 @@
       <div class="m-7">
         <form method="POST" action="/auth/register">
           <div class="mb-6">
-            <label for="name" class="block mb-2 text-sm text-gray-600 dark:text-gray-400">Full Name</label>
-            <input type="text" name="name" id="name" placeholder="John Doe" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
+            <label for="name" class="block mb-2 text-sm text-gray-600 dark:text-gray-400"">Full Name</label>
+            <input type=" text" name="name" id="name" placeholder=" John Doe" value="<?= isset($_POST['name']) ? htmlspecialchars($_POST['name']) : '' ?>" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
           </div>
           <div class="mb-6">
             <label for="email" class="block mb-2 text-sm text-gray-600 dark:text-gray-400">Email Address</label>
-            <input type="email" name="email" id="email" placeholder="you@company.com" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
+            <input type="email" name="email" id="email" placeholder="you@company.com" value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
           </div>
           <div class="mb-6">
-            <label for="city" class="block mb-2 text-sm text-gray-600 dark:text-gray-400">City</label>
-            <input type="text" name="city" id="city" placeholder="Your City" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
+            <label for="city " class="block mb-2 text-sm text-gray-600 dark:text-gray-400">City</label>
+            <input type="text" name="city" id="city" placeholder="Your City" value="<?= isset($_POST['city']) ? htmlspecialchars($_POST['city']) : '' ?>" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
           </div>
           <div class="mb-6">
             <label for="country" class="block mb-2 text-sm text-gray-600 dark:text-gray-400">Country</label>
-            <input type="text" name="country" id="state" placeholder="Your Country" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
+            <input type="text" name="country" id="state" placeholder="Your Country" value="<?= isset($_POST['country']) ? htmlspecialchars($_POST['country']) : '' ?>" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
           </div>
           <div class="mb-6">
             <label for="password" class="text-sm text-gray-600 dark:text-gray-400">Password</label>

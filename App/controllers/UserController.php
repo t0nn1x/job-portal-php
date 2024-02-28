@@ -74,8 +74,35 @@ class UserController {
         ]
         ]);
         exit; 
-    } else {
-      
-    }
+    } 
+
+    // Check if email exists
+    $params = [
+      'email' => $email
+    ];
+
+      $user = $this->db->query('SELECT * FROM users WHERE email = :email', $params);
+
+      if($user->rowCount() > 0) {
+          $errors['email'] = 'That email already exists';
+          loadView('users/create', [
+              'errors' => $errors
+          ]);
+          exit;
+      }
+
+    // Create user account
+    $params = [
+      'name' => $name,
+      'email' => $email,
+      'city' => $city,
+      'country' => $country,
+      'password' => password_hash($password, PASSWORD_DEFAULT)
+    ];
+
+    $this->db->query('INSERT INTO users(name, email, city, country, password)
+                      VALUES(:name, :email, :city, :country, :password)', $params); 
+
+    redirect('/home');
   }
 }
