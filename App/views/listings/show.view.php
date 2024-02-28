@@ -2,6 +2,13 @@
 
 <?php loadPartial('navbar') ?>
 
+<?php if (isset($success_message)) : ?>
+    <div class="message bg-green-100 my-3"
+         style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: 10px; border: 1px solid transparent; border-radius: 0.25rem;">
+        <?= $success_message ?>
+    </div>
+<?php endif; ?>
+
 <!-- Job Detail Start -->
 <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
   <div class="container">

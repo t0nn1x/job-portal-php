@@ -8,6 +8,13 @@
         <h2>Update Job Listing</h2>
         </p>
     </div>
+    <?php if (isset($_SESSION['success_message'])) : ?>
+        <div class="message bg-green-100 my-3"
+             style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: 10px; border: 1px solid transparent; border-radius: 0.25rem;">
+            <?= $_SESSION['success_message'] ?>
+        </div>
+        <?php unset($_SESSION['success_message']); ?>
+    <?php endif; ?>
     <form action="/listings/<?= $listing->id ?>" method="POST">
         <input type="hidden" name="_method" value="PUT">
         <h3>Job Info:</h3>

@@ -164,7 +164,13 @@ class ListingController {
       return;
     }
 
-    loadView('listings/show', ['listing' => $listing]);
+      $success_message = null;
+      if (isset($_SESSION['success_message'])) {
+          $success_message = $_SESSION['success_message'];
+          unset($_SESSION['success_message']);
+      }
+
+    loadView('listings/show', ['listing' => $listing, 'success_message' => $success_message]);
   }
 
   /**
@@ -187,7 +193,7 @@ class ListingController {
 
   /**
    * Show the listing edit form
-   * 
+   *
    * @param int $id
    * @return void
    */
@@ -217,6 +223,7 @@ class ListingController {
             $this->showEditViewWithErrors($errors, $listingData, $id);
         } else {
             $this->updateListingData($listingData, $id);
+            $_SESSION['success_message'] = 'Listing updated successfully';
             redirect('/listings/' . $id);
         }
     }
