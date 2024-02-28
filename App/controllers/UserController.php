@@ -38,14 +38,12 @@ class UserController {
    * @return void
    */
   public function store() {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $city = $_POST['city'];
-    $country = $_POST['country'];
-    $password = $_POST['password'];
-    $passwordConfirmation = $_POST['password_confirmation'];
-
-    $errors = [];
+      $name = isset($_POST['name']) ? trim($_POST['name']) : null;
+      $email = isset($_POST['email']) ? trim($_POST['email']) : null;
+      $city = isset($_POST['city']) ? trim($_POST['city']) : null;
+      $country = isset($_POST['country']) ? trim($_POST['country']) : null;
+      $password = isset($_POST['password']) ? trim($_POST['password']) : null;
+      $passwordConfirmation = isset($_POST['password_confirmation']) ? trim($_POST['password_confirmation']) : null;
 
     // Validation
     if (!Validation::email($email)) {
@@ -116,5 +114,19 @@ class UserController {
     ]);
 
     redirect('/');
+  }
+
+  /**
+   * Logout a user and kill session
+   * 
+   * @return void
+   */
+  public function logout() {
+    Session::clearAll();
+    
+    $params = session_get_cookie_params();
+    setcookie('PHPSESSID', '', time() - 86400, $params['path'], $params['domain']);
+
+    redirect('/login');
   }
 }

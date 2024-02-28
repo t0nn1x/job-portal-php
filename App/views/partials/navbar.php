@@ -17,7 +17,7 @@
       <h1 class="m-0 text-primary">JobEntry</h1>
     </a>
     <?php if (Session::has('user')) : ?>
-      <div style="font-weight: bold; color: green;">
+      <div class="nav-item nav-item nav-link active">
         Welcome, <?= Session::get('user')['name'] ?>
       </div>
     <?php endif; ?>
@@ -39,7 +39,7 @@
 
         <?php if (Session::has('user')) : ?>
           <form action="/auth/logout" method="POST">
-            <button type="submit" class="nav-item nav-link" style="color: red; font-weight: bold;">Logout</button>
+            <button type="submit" class="nav-item nav-link active" style="color: red; font-weight: bold;">Logout</button>
           </form>
         <?php else : ?>
           <a href="/auth/login" class="nav-item nav-link">Login</a>
