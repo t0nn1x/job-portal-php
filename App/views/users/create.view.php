@@ -7,10 +7,13 @@
     <div class="max-w-md mx-auto my-10 bg-white p-5 rounded-md shadow-sm">
       <div class="text-center">
         <h1 class="my-3 text-3xl font-semibold text-gray-700 dark:text-gray-200">Register</h1>
+        <?= loadPartial('errors', [
+          'errors' => $errors ?? []
+        ]) ?>
         <p class="text-gray-400 dark:text-gray-400">Fill up the form below.</p>
       </div>
       <div class="m-7">
-        <form action="">
+        <form method="POST" action="/auth/register">
           <div class="mb-6">
             <label for="name" class="block mb-2 text-sm text-gray-600 dark:text-gray-400">Full Name</label>
             <input type="text" name="name" id="name" placeholder="John Doe" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
@@ -24,16 +27,16 @@
             <input type="text" name="city" id="city" placeholder="Your City" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
           </div>
           <div class="mb-6">
-            <label for="state" class="block mb-2 text-sm text-gray-600 dark:text-gray-400">State</label>
-            <input type="text" name="state" id="state" placeholder="Your State" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
+            <label for="country" class="block mb-2 text-sm text-gray-600 dark:text-gray-400">Country</label>
+            <input type="text" name="country" id="state" placeholder="Your Country" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
           </div>
           <div class="mb-6">
             <label for="password" class="text-sm text-gray-600 dark:text-gray-400">Password</label>
             <input type="password" name="password" id="password" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
           </div>
           <div class="mb-6">
-            <label for="confirm_password" class="text-sm text-gray-600 dark:text-gray-400">Confirm Password</label>
-            <input type="password" name="confirm_password" id="confirm_password" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
+            <label for="password_confirmation" class="text-sm text-gray-600 dark:text-gray-400">Confirm Password</label>
+            <input type="password" name="password_confirmation" id="confirm_password" required class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-100 focus:border-green-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-green-900 dark:focus:border-green-500" />
           </div>
           <div class="mb-6">
             <button type="submit" class="w-full px-3 py-4 text-white bg-green-500 rounded-md focus:bg-green-600 focus:outline-none">Sign Up</button>
