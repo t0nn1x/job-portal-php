@@ -28,6 +28,8 @@
   <!-- Customized Bootstrap Stylesheet -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
 
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+
   <!-- Template Stylesheet -->
   <link href="css/style.css" rel="stylesheet">
 </head>
