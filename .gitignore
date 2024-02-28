@@ -3,4 +3,5 @@
 /config/db.php 
 .env
 .vscode
+.idea
 .DS_STORE
