@@ -38,12 +38,12 @@ class UserController {
    * @return void
    */
   public function store() {
-      $name = isset($_POST['name']) ? trim($_POST['name']) : null;
-      $email = isset($_POST['email']) ? trim($_POST['email']) : null;
-      $city = isset($_POST['city']) ? trim($_POST['city']) : null;
-      $country = isset($_POST['country']) ? trim($_POST['country']) : null;
-      $password = isset($_POST['password']) ? trim($_POST['password']) : null;
-      $passwordConfirmation = isset($_POST['password_confirmation']) ? trim($_POST['password_confirmation']) : null;
+    $name = isset($_POST['name']) ? trim($_POST['name']) : null;
+    $email = isset($_POST['email']) ? trim($_POST['email']) : null;
+    $city = isset($_POST['city']) ? trim($_POST['city']) : null;
+    $country = isset($_POST['country']) ? trim($_POST['country']) : null;
+    $password = isset($_POST['password']) ? trim($_POST['password']) : null;
+    $passwordConfirmation = isset($_POST['password_confirmation']) ? trim($_POST['password_confirmation']) : null;
 
     // Validation
     if (!Validation::email($email)) {
@@ -104,7 +104,8 @@ class UserController {
 
     // Get new user id
     $userId = $this->db->conn->lastInsertId();
-    
+
+    // Set user session
     Session::set('user', [
       'id' => $userId,
       'name' => $name,
@@ -123,10 +124,82 @@ class UserController {
    */
   public function logout() {
     Session::clearAll();
-    
+
     $params = session_get_cookie_params();
     setcookie('PHPSESSID', '', time() - 86400, $params['path'], $params['domain']);
 
-    redirect('/login');
+    redirect('login');
+  }
+
+  /**
+   * Authenticate a user with email and password
+   * 
+   * @return void
+   */
+  public function authenticate() {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $errors = [];
+
+    // inspectValueAndDie('errors');
+
+    // Validation
+    if (!Validation::email($email)) {
+      $errors['email'] = 'Please enter a valid email';
+    }
+
+    if (!Validation::string($password, 6, 50)) {
+      $errors['password'] = 'Password must be between 6 and 50 characters';
+    }
+
+    // Check for errrors
+    if (!empty($errors)) {
+      loadView('users/login', [
+        'errors' => $errors
+      ]);
+      exit;
+    }
+
+    // Check for email
+    $params = [
+      'email' => $email,
+    ];
+
+    // Check for email
+    $params = [
+      'email' => $email,
+    ];
+
+    $user = $this->db->query('SELECT * FROM users WHERE email = :email', $params)->fetch();
+
+    if (!$user) {
+      $errors['email'] = 'Incorrect credentials';
+      loadView('users/login', [
+        'errors' => $errors
+      ]);
+      exit;
+    }
+
+    // Check if password is correct
+    if(!password_verify($password, $user->password)) {
+      $errors['password'] = 'Incorrect credentials';
+      loadView('users/login', [
+        'errors' => $errors
+      ]);
+      exit;
+    }
+
+    // Set user session
+    Session::set('user', [
+      'id' => $user->id,
+      'name' => $user->name,
+      'email' => $user->email,
+      'city' => $user->city,
+      'country' => $user->country
+    ]);
+
+    redirect('/');
+
   }
 }
