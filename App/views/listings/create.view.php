@@ -20,9 +20,9 @@
     <div class="form-group">
       <label for="employmentType">Employment Type</label>
       <select class="form-control" id="employmentType" name="employmentType" required>
-        <option value="remote">Remote</option>
-        <option value="full-time">Full Time</option>
-        <option value="part-time">Part Time</option>
+        <option value="Remote">Remote</option>
+        <option value="Full time">Full Time</option>
+        <option value="Part time">Part Time</option>
       </select>
     </div>
     <div class="form-group">
