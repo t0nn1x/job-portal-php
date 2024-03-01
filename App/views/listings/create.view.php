@@ -8,7 +8,7 @@
     <h2>Create Job Listing</h2>
     </p>
   </div>
-  <form action="/listings" method="POST">
+  <form action="/listings" method="POST" enctype="multipart/form-data">
     <h3>Job Info:</h3>
     <?= loadPartial('errors', [
       'errors' => $errors ?? []
@@ -16,6 +16,10 @@
     <div class="form-group">
       <label for="jobTitle">Job Title</label>
       <input type="text" class="form-control" id="jobTitle" name="jobTitle" required>
+    </div>
+    <div class="form-group">
+      <label for="image">Listing Image</label>
+      <input type="file" class="form-control" id="image" name="image">
     </div>
     <div class="form-group">
       <label for="employmentType">Employment Type</label>

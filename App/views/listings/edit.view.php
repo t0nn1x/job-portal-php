@@ -15,7 +15,7 @@
         </div>
         <?php unset($_SESSION['success_message']); ?>
     <?php endif; ?>
-    <form action="/listings/<?= $listing->id ?>" method="POST">
+    <form action="/listings/<?= $listing->id ?>" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_method" value="PUT">
         <h3>Job Info:</h3>
         <?php if (isset($errors)) : ?>
@@ -30,6 +30,10 @@
             <label for="jobTitle">Job Title</label>
             <input type="text" value="<?= $listing->title ?>" class="form-control" id="jobTitle" name="jobTitle"
                    required>
+        </div>
+        <div class="form-group">
+            <label for="image">Listing Image</label>
+            <input type="file" class="form-control" id="image" name="image">
         </div>
         <div class="form-group">
             <label for="employmentType">Employment Type</label>
