@@ -20,13 +20,25 @@ class ListingController {
    *
    * @return void
    */
-  public function index() {
-    $listings = $this->db->query('SELECT * FROM listings ORDER BY created_at DESC')->fetchAll();
+    public function index() {
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'Featured';
 
-    loadView('listings/index', [
-      'listings' => $listings
-    ]);
-  }
+        switch ($sort) {
+            case 'Full Time':
+            case 'Part Time':
+            case 'Remote':
+                $listings = $this->db->query('SELECT * FROM listings WHERE employment_type = :sort ORDER BY created_at DESC', ['sort' => $sort])->fetchAll();
+                break;
+            case 'Featured':
+            default:
+                $listings = $this->db->query('SELECT * FROM listings ORDER BY created_at DESC')->fetchAll();
+                break;
+        }
+
+        loadView('listings/index', [
+            'listings' => $listings
+        ]);
+    }
 
   /**
    * Create a new listing
