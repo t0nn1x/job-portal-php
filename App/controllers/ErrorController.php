@@ -17,8 +17,8 @@ class ErrorController {
       'message' => $message
     ]);
   }
-
-  /**
+  
+      /**
    * 403 unauthorized
    *
    * @return void
