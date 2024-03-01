@@ -19,7 +19,7 @@
             <div class="job-item p-4 mb-4">
               <div class="row g-4">
                 <div class="col-sm-12 col-md-8 d-flex align-items-center">
-                  <img class="flex-shrink-0 img-fluid border rounded" src="img/com-logo-1.jpg" alt="" style="width: 80px; height: 80px;">
+                  <img class="flex-shrink-0 img-fluid border rounded" src="<?= $listing->image ?>" alt="" style="width: 80px; height: 80px;">
                   <div class="text-start ps-4">
                     <h5 class="mb-3"><?= $listing->title ?></h5>
                     <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i><?= $listing->city . ', ' . $listing->country ?></span>

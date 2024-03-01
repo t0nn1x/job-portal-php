@@ -2,7 +2,7 @@
 
 <?php loadPartial('navbar') ?>
 
-<?php loadPartial('message')?>
+<?php loadPartial('message') ?>
 
 <!-- Job Detail Start -->
 <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
@@ -10,7 +10,7 @@
     <div class="row gy-5 gx-4">
       <div class="col-lg-8">
         <div class="d-flex align-items-center mb-5">
-          <img class="flex-shrink-0 img-fluid border rounded" src="img/com-logo-2.jpg" alt="" style="width: 80px; height: 80px;">
+          <img class="flex-shrink-0 img-fluid border rounded" src="<?= $listing->image ?>" alt="" style="width: 80px; height: 80px;">
           <div class="text-start ps-4">
             <h3 class="mb-3"><?= $listing->title ?></h3>
             <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i><?= $listing->city ?>, <?= $listing->country ?></span>
@@ -58,11 +58,11 @@
       <div class="col-lg-4">
         <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
           <h4 class="mb-4">Job Summary</h4>
-          <?php if(Framework\Authorization::isOwner(Framework\Session::get('user')['id'], $listing->id)) :?>
-          <p>
-            <button onclick="deleteListing(<?= $listing->id ?>)" class="btn btn-danger">Delete</button>
-            <a href="/listings/<?= $listing->id ?>/edit " class="btn btn-primary">Edit</a>
-          </p>
+          <?php if (Framework\Authorization::isOwner(Framework\Session::get('user')['id'], $listing->id)) : ?>
+            <p>
+              <button onclick="deleteListing(<?= $listing->id ?>)" class="btn btn-danger">Delete</button>
+              <a href="/listings/<?= $listing->id ?>/edit " class="btn btn-primary">Edit</a>
+            </p>
           <?php endif; ?>
 
           <p><i class="fa fa-angle-right text-primary me-2"></i>Published On: <?= $listing->created_at ?></p>

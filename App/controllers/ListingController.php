@@ -54,21 +54,26 @@ class ListingController {
    *
    * @return void
    */
-  public function store() {
-    $newListingData = $this->getNewListingData();
+    public function store() {
+        $newListingData = []; // Initialize the variable
 
-    $errors = $this->validateListingData($newListingData);
+        try {
+            $newListingData = $this->getNewListingData();
 
-    if (!empty($errors)) {
-      $this->showCreateViewWithErrors($errors, $newListingData);
-    } else {
-      $this->insertListingData($newListingData);
-      // $_SESSION['success_message'] = 'Listing created successfully';
-      Session::setFlashMessage('success_message', 'Listing created successfully');
-      
-      redirect('/listings');
+            $errors = $this->validateListingData($newListingData);
+
+            if (!empty($errors)) {
+                $this->showCreateViewWithErrors($errors, $newListingData);
+            } else {
+                $this->insertListingData($newListingData);
+                Session::setFlashMessage('success_message', 'Listing created successfully');
+                redirect('/listings');
+            }
+        } catch (\Exception $e) {
+            $errors['image'] = $e->getMessage();
+            $this->showCreateViewWithErrors($errors, $newListingData);
+        }
     }
-  }
 
   /**
    * Get the new listing data from the request
@@ -84,6 +89,13 @@ class ListingController {
     ];
 
     $newListingData = array_intersect_key($_POST, array_flip($allowedFields));
+
+    // Handle image upload and compression
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+      $newListingData['image'] = $this->uploadAndCompressImage($_FILES['image']);
+    } else {
+      $newListingData['image'] = 'uploads/default.jpg'; // Set default image path
+    }
 
     $newListingData['user_id'] = Session::get('user')['id'];
 
@@ -138,11 +150,11 @@ class ListingController {
     $sql = 'INSERT INTO listings (
       user_id, title, description, salary, tags,
       company, address, city, country, phone, email,
-      requirements, benefits, employment_type
+      requirements, benefits, employment_type, image
     ) VALUES (
       :user_id, :title, :description, :salary, :tags,
       :company, :address, :city, :country, :phone, :email,
-      :requirements, :benefits, :employment_type
+      :requirements, :benefits, :employment_type, :image
     )';
 
     $bindings = [
@@ -159,7 +171,8 @@ class ListingController {
       'email' => $newListingData['email'],
       'requirements' => $newListingData['requirements'],
       'benefits' => $newListingData['benefits'],
-      'employment_type' => $newListingData['employmentType']
+      'employment_type' => $newListingData['employmentType'],
+      'image' => $newListingData['image'] // Add this line
     ];
 
     $this->db->query($sql, $bindings);
@@ -252,29 +265,33 @@ class ListingController {
    * @param int $id
    * @return void
    */
-  public function update($id) {
-    $userId = Session::get('user')['id'];
+    public function update($id) {
+        $userId = Session::get('user')['id'];
 
-    $listingData = $this->getNewListingData();
+        $listingData = $this->getNewListingData();
 
-    // Check if the listing exists and belongs to the user
-    if (!Authorization::isOwner($userId, $id)) {
-      Session::setFlashMessage('error_message', 'You are not authorized to update this listing or the listing does not exist');
-      return redirect('/listings/' . $id);
-      exit;
+        // Check if the listing exists and belongs to the user
+        if (!Authorization::isOwner($userId, $id)) {
+            Session::setFlashMessage('error_message', 'You are not authorized to update this listing or the listing does not exist');
+            return redirect('/listings/' . $id);
+            exit;
+        }
+
+        $errors = $this->validateListingData($listingData);
+
+        if (!empty($errors)) {
+            $this->showEditViewWithErrors($errors, $listingData, $id);
+        } else {
+            // Handle image upload and compression
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $listingData['image'] = $this->uploadAndCompressImage($_FILES['image']);
+            }
+
+            $this->updateListingData($listingData, $id);
+            Session::setFlashMessage('success_message', 'Listing updated successfully');
+            redirect('/listings/' . $id);
+        }
     }
-
-    $errors = $this->validateListingData($listingData);
-
-
-    if (!empty($errors)) {
-      $this->showEditViewWithErrors($errors, $listingData, $id);
-    } else {
-      $this->updateListingData($listingData, $id);
-      Session::setFlashMessage('success_message', 'Listing updated successfully');
-      redirect('/listings/' . $id);
-    }
-  }
 
   /**
    * Show the edit view with errors
@@ -303,7 +320,7 @@ class ListingController {
     $sql = 'UPDATE listings SET
     title = :title, description = :description, salary = :salary, tags = :tags,
     company = :company, address = :address, city = :city, country = :country, phone = :phone, email = :email,
-    requirements = :requirements, benefits = :benefits, employment_type = :employment_type
+    requirements = :requirements, benefits = :benefits, employment_type = :employment_type, image = :image
     WHERE id = :id';
 
     $bindings = [
@@ -320,7 +337,8 @@ class ListingController {
       'email' => $listingData['email'],
       'requirements' => $listingData['requirements'],
       'benefits' => $listingData['benefits'],
-      'employment_type' => $listingData['employmentType']
+      'employment_type' => $listingData['employmentType'],
+      'image' => $listingData['image'] // Add this line
     ];
 
     $this->db->query($sql, $bindings);
@@ -356,4 +374,46 @@ class ListingController {
       'location' => $location
     ]);
   }
+
+  /**
+   * Compress and upload the listing image
+   *
+   * @param array $file The uploaded file
+   * @return string The path to the saved image
+   */
+    private function uploadAndCompressImage($file) {
+        if ($file['error'] === UPLOAD_ERR_OK) {
+            $tmpName = $file['tmp_name'];
+            $fileName = uniqid() . '.jpg'; // Generate a unique name for the file
+            $destinationPath = basePath('public/uploads/') . $fileName;
+
+            // Get the image type
+            $imageInfo = getimagesize($tmpName);
+            $imageType = $imageInfo[2];
+
+            // Compress and move the image
+            switch ($imageType) {
+                case IMAGETYPE_JPEG:
+                    $source = imagecreatefromjpeg($tmpName);
+                    imagejpeg($source, $destinationPath, 75); // 75 is the quality setting
+                    break;
+                case IMAGETYPE_PNG:
+                    $source = imagecreatefrompng($tmpName);
+                    imagesavealpha($source, true); // save alphablending setting (important)
+                    imagepng($source, $destinationPath, 9); // 9 is the compression level (0 no compression, 9 maximum)
+                    break;
+                case IMAGETYPE_GIF:
+                    $source = imagecreatefromgif($tmpName);
+                    imagegif($source, $destinationPath);
+                    break;
+                default:
+                    throw new \Exception('Invalid image type');
+            }
+
+            return 'uploads/' . $fileName;
+        }
+
+        // Return a default image if upload failed or not provided
+        return 'uploads/default.jpg';
+    }
 } 

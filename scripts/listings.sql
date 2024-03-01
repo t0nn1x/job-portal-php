@@ -17,7 +17,8 @@ CREATE TABLE `listings` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `employment_type` varchar(255) DEFAULT NULL,
   `category` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_listings_users` (`user_id`),
   CONSTRAINT `fk_listings_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 64 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci
+) ENGINE = InnoDB AUTO_INCREMENT = 66 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci
