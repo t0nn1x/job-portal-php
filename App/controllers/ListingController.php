@@ -193,6 +193,7 @@ class ListingController {
       http_response_code(403); // Forbidden
       exit;
     }
+
     // Perform the delete operation and set flash message
     $deleted = $this->db->query('DELETE FROM listings WHERE id = :id AND user_id = :user_id', ['id' => $id, 'user_id' => $userId]);
 
@@ -215,11 +216,19 @@ class ListingController {
    * @return void
    */
   public function edit($id) {
+    $userId = Session::get('user')['id'];
+    
     $listing = $this->db->query('SELECT * FROM listings WHERE id = :id', ['id' => $id])->fetch();
 
     if (!$listing) {
       ErrorController::notFound('Listing not found.');
       return;
+    }
+
+    if (!Authorization::isOwner($userId, $id)) {
+      Session::setFlashMessage('error_message', 'You are not authorized to update this listing or the listing does not exist');
+      return redirect('/listings/' . $id);
+      exit;
     }
 
     loadView('listings/edit', ['listing' => $listing]);
@@ -232,9 +241,19 @@ class ListingController {
    * @return void
    */
   public function update($id) {
+    $userId = Session::get('user')['id'];
+
     $listingData = $this->getNewListingData();
 
+    // Check if the listing exists and belongs to the user
+    if (!Authorization::isOwner($userId, $id)) {
+      Session::setFlashMessage('error_message', 'You are not authorized to update this listing or the listing does not exist');
+      return redirect('/listings/' . $id);
+      exit;
+    }
+
     $errors = $this->validateListingData($listingData);
+
 
     if (!empty($errors)) {
       $this->showEditViewWithErrors($errors, $listingData, $id);

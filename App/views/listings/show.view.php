@@ -58,10 +58,12 @@
       <div class="col-lg-4">
         <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
           <h4 class="mb-4">Job Summary</h4>
+          <?php if(Framework\Authorization::isOwner(Framework\Session::get('user')['id'], $listing->id)) :?>
           <p>
             <button onclick="deleteListing(<?= $listing->id ?>)" class="btn btn-danger">Delete</button>
             <a href="/listings/<?= $listing->id ?>/edit " class="btn btn-primary">Edit</a>
           </p>
+          <?php endif; ?>
 
           <p><i class="fa fa-angle-right text-primary me-2"></i>Published On: <?= $listing->created_at ?></p>
           <p><i class="fa fa-angle-right text-primary me-2"></i>Vacancy: <?= $listing->id ?> position</p>
