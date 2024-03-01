@@ -2,12 +2,7 @@
 
 <?php loadPartial('navbar') ?>
 
-<?php if (isset($success_message)) : ?>
-    <div class="message bg-green-100 my-3"
-         style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: 10px; border: 1px solid transparent; border-radius: 0.25rem;">
-        <?= $success_message ?>
-    </div>
-<?php endif; ?>
+<?php loadPartial('message')?>
 
 <!-- Job Detail Start -->
 <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
@@ -63,10 +58,12 @@
       <div class="col-lg-4">
         <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
           <h4 class="mb-4">Job Summary</h4>
+          <?php if(Framework\Authorization::isOwner(Framework\Session::get('user')['id'], $listing->id)) :?>
           <p>
             <button onclick="deleteListing(<?= $listing->id ?>)" class="btn btn-danger">Delete</button>
             <a href="/listings/<?= $listing->id ?>/edit " class="btn btn-primary">Edit</a>
           </p>
+          <?php endif; ?>
 
           <p><i class="fa fa-angle-right text-primary me-2"></i>Published On: <?= $listing->created_at ?></p>
           <p><i class="fa fa-angle-right text-primary me-2"></i>Vacancy: <?= $listing->id ?> position</p>
@@ -89,14 +86,14 @@
       fetch('/listings/' + listingId, {
         method: 'DELETE'
       }).then(response => {
-        if (response.ok) {
+        if (response.status === 204) { // No Content
           window.location.href = '/listings?status=deleted';
         } else {
-          alert('Error deleting listing');
+          window.location.href = '/listings/' + listingId;
         }
       }).catch(error => {
         console.error('Error:', error);
-        alert('Error deleting listing');
+        window.location.href = '/listings/' + listingId;
       });
     }
   }
