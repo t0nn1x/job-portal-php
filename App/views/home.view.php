@@ -6,8 +6,6 @@
 
 <?php loadPartial('search') ?>
 
-<?php loadPartial('category') ?>
-
 <?php loadPartial('about') ?>
 
 <!-- Jobs Start -->
