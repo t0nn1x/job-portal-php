@@ -20,13 +20,25 @@ class ListingController {
    *
    * @return void
    */
-  public function index() {
-    $listings = $this->db->query('SELECT * FROM listings ORDER BY created_at DESC')->fetchAll();
+    public function index() {
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'Featured';
 
-    loadView('listings/index', [
-      'listings' => $listings
-    ]);
-  }
+        switch ($sort) {
+            case 'Full Time':
+            case 'Part Time':
+            case 'Remote':
+                $listings = $this->db->query('SELECT * FROM listings WHERE employment_type = :sort ORDER BY created_at DESC', ['sort' => $sort])->fetchAll();
+                break;
+            case 'Featured':
+            default:
+                $listings = $this->db->query('SELECT * FROM listings ORDER BY created_at DESC')->fetchAll();
+                break;
+        }
+
+        loadView('listings/index', [
+            'listings' => $listings
+        ]);
+    }
 
   /**
    * Create a new listing
@@ -313,4 +325,35 @@ class ListingController {
 
     $this->db->query($sql, $bindings);
   }
-}
+
+  /** 
+   * Search listings by keyword/category/location
+   * 
+   * @return void
+   */
+  public function search() {
+    $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
+    $category = isset($_GET['category']) ? trim($_GET['category']) : '';
+    $location = isset($_GET['location']) ? trim($_GET['location']) : '';
+
+    $query = "SELECT * FROM listings WHERE (title LIKE :keyword
+    OR description LIKE :keyword OR tags LIKE :keyword OR company 
+    LIKE :keyword or salary LIKE :keyword) 
+    AND (city LIKE :location OR country LIKE :location)
+    AND (category LIKE :category)";
+
+    $params = [
+      'keyword' => "%{$keyword}%",
+      'category' => "%{$category}%",
+      'location' => "%{$location}%"
+    ];
+
+    $listings = $this->db->query($query, $params)->fetchAll();
+
+    loadView('/listings/index', [
+      'listings' => $listings,
+      'keyword' => $keyword,
+      'location' => $location
+    ]);
+  }
+} 
