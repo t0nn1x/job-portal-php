@@ -2,7 +2,9 @@
 
 namespace App\Controllers;
 
+use Framework\Authorization;
 use Framework\Database;
+use Framework\Session;
 use Framework\Validation;
 
 class ListingController {
@@ -19,7 +21,7 @@ class ListingController {
    * @return void
    */
   public function index() {
-    $listings = $this->db->query('SELECT * FROM listings')->fetchAll();
+    $listings = $this->db->query('SELECT * FROM listings ORDER BY created_at DESC')->fetchAll();
 
     loadView('listings/index', [
       'listings' => $listings
@@ -49,6 +51,9 @@ class ListingController {
       $this->showCreateViewWithErrors($errors, $newListingData);
     } else {
       $this->insertListingData($newListingData);
+      // $_SESSION['success_message'] = 'Listing created successfully';
+      Session::setFlashMessage('success_message', 'Listing created successfully');
+      
       redirect('/listings');
     }
   }
@@ -68,7 +73,7 @@ class ListingController {
 
     $newListingData = array_intersect_key($_POST, array_flip($allowedFields));
 
-    $newListingData['user_id'] = 1;
+    $newListingData['user_id'] = Session::get('user')['id'];
 
     $newListingData = array_map('sanitize', $newListingData);
 
@@ -164,11 +169,11 @@ class ListingController {
       return;
     }
 
-      $success_message = null;
-      if (isset($_SESSION['success_message'])) {
-          $success_message = $_SESSION['success_message'];
-          unset($_SESSION['success_message']);
-      }
+    $success_message = null;
+    if (isset($_SESSION['success_message'])) {
+      $success_message = $_SESSION['success_message'];
+      unset($_SESSION['success_message']);
+    }
 
     loadView('listings/show', ['listing' => $listing, 'success_message' => $success_message]);
   }
@@ -180,15 +185,27 @@ class ListingController {
    * @return void
    */
   public function destroy($id) {
-    // Perform the delete operation and set flash message
-    if ($this->db->query('DELETE FROM listings WHERE id = :id', ['id' => $id])) {
-      $_SESSION['success_message'] = 'Listing deleted successfully';
-    } else {
-      $_SESSION['error_message'] = 'Error during deleting a listing';
-    }
+    $userId = Session::get('user')['id'];
 
-    echo json_encode(['success' => true]);
-    return;
+    // Check if the listing exists and belongs to the user
+    if (!Authorization::isOwner($userId, $id)) {
+      Session::setFlashMessage('error_message', 'You are not authorized to delete this listing or the listing does not exist');
+      http_response_code(403); // Forbidden
+      exit;
+    }
+    // Perform the delete operation and set flash message
+    $deleted = $this->db->query('DELETE FROM listings WHERE id = :id AND user_id = :user_id', ['id' => $id, 'user_id' => $userId]);
+
+    if ($deleted) {
+      Session::setFlashMessage('success_message', 'Listing deleted successfully');
+      http_response_code(204); // No Content
+      exit;
+    } else {
+
+      Session::setFlashMessage('error_message', 'Error during deleting a listing');
+      http_response_code(500); // Internal Server Error
+      exit;
+    }
   }
 
   /**
@@ -208,73 +225,73 @@ class ListingController {
     loadView('listings/edit', ['listing' => $listing]);
   }
 
-    /**
-     * Update a specific listing
-     *
-     * @param int $id
-     * @return void
-     */
-    public function update($id) {
-        $listingData = $this->getNewListingData();
+  /**
+   * Update a specific listing
+   *
+   * @param int $id
+   * @return void
+   */
+  public function update($id) {
+    $listingData = $this->getNewListingData();
 
-        $errors = $this->validateListingData($listingData);
+    $errors = $this->validateListingData($listingData);
 
-        if (!empty($errors)) {
-            $this->showEditViewWithErrors($errors, $listingData, $id);
-        } else {
-            $this->updateListingData($listingData, $id);
-            $_SESSION['success_message'] = 'Listing updated successfully';
-            redirect('/listings/' . $id);
-        }
+    if (!empty($errors)) {
+      $this->showEditViewWithErrors($errors, $listingData, $id);
+    } else {
+      $this->updateListingData($listingData, $id);
+      Session::setFlashMessage('success_message', 'Listing updated successfully');
+      redirect('/listings/' . $id);
     }
+  }
 
-    /**
-     * Show the edit view with errors
-     *
-     * @param array $errors
-     * @param array $listingData
-     * @param int $id
-     * @return void
-     */
-    private function showEditViewWithErrors($errors, $listingData, $id) {
-        $listingData['id'] = $id;
-        loadView('listings/edit', [
-            'errors' => $errors,
-            'listing' => (object) $listingData
-        ]);
-    }
+  /**
+   * Show the edit view with errors
+   *
+   * @param array $errors
+   * @param array $listingData
+   * @param int $id
+   * @return void
+   */
+  private function showEditViewWithErrors($errors, $listingData, $id) {
+    $listingData['id'] = $id;
+    loadView('listings/edit', [
+      'errors' => $errors,
+      'listing' => (object) $listingData
+    ]);
+  }
 
-    /**
-     * Update the listing data in the database
-     *
-     * @param array $listingData
-     * @param int $id
-     * @return void
-     */
-    private function updateListingData($listingData, $id) {
-        $sql = 'UPDATE listings SET
+  /**
+   * Update the listing data in the database
+   *
+   * @param array $listingData
+   * @param int $id
+   * @return void
+   */
+  private function updateListingData($listingData, $id) {
+    $sql = 'UPDATE listings SET
     title = :title, description = :description, salary = :salary, tags = :tags,
     company = :company, address = :address, city = :city, country = :country, phone = :phone, email = :email,
     requirements = :requirements, benefits = :benefits, employment_type = :employment_type
     WHERE id = :id';
 
-        $bindings = [
-            'id' => $id,
-            'title' => $listingData['jobTitle'],
-            'description' => $listingData['description'],
-            'salary' => $listingData['annualSalary'],
-            'tags' => $listingData['tags'],
-            'company' => $listingData['companyName'],
-            'address' => $listingData['address'],
-            'city' => $listingData['city'],
-            'country' => $listingData['country'],
-            'phone' => $listingData['phone'],
-            'email' => $listingData['email'],
-            'requirements' => $listingData['requirements'],
-            'benefits' => $listingData['benefits'],
-            'employment_type' => $listingData['employmentType']
-        ];
+    $bindings = [
+      'id' => $id,
+      'title' => $listingData['jobTitle'],
+      'description' => $listingData['description'],
+      'salary' => $listingData['annualSalary'],
+      'tags' => $listingData['tags'],
+      'company' => $listingData['companyName'],
+      'address' => $listingData['address'],
+      'city' => $listingData['city'],
+      'country' => $listingData['country'],
+      'phone' => $listingData['phone'],
+      'email' => $listingData['email'],
+      'requirements' => $listingData['requirements'],
+      'benefits' => $listingData['benefits'],
+      'employment_type' => $listingData['employmentType']
+    ];
 
-        $this->db->query($sql, $bindings);
-    }
+    $this->db->query($sql, $bindings);
+  }
 }

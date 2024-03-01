@@ -2,12 +2,7 @@
 
 <?php loadPartial('navbar') ?>
 
-<?php if (isset($success_message)) : ?>
-    <div class="message bg-green-100 my-3"
-         style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: 10px; border: 1px solid transparent; border-radius: 0.25rem;">
-        <?= $success_message ?>
-    </div>
-<?php endif; ?>
+<?php loadPartial('message')?>
 
 <!-- Job Detail Start -->
 <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
@@ -89,14 +84,14 @@
       fetch('/listings/' + listingId, {
         method: 'DELETE'
       }).then(response => {
-        if (response.ok) {
+        if (response.status === 204) { // No Content
           window.location.href = '/listings?status=deleted';
         } else {
-          alert('Error deleting listing');
+          window.location.href = '/listings/' + listingId;
         }
       }).catch(error => {
         console.error('Error:', error);
-        alert('Error deleting listing');
+        window.location.href = '/listings/' + listingId;
       });
     }
   }
