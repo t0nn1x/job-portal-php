@@ -8,6 +8,7 @@ $router->get('/listings/search', 'ListingController@search');
 $router->put('/listings/{id}', 'ListingController@update', ['auth']);
 $router->get('/listings/{id}', 'ListingController@show');
 $router->delete('/listings/{id}', 'ListingController@destroy', ['auth']);
+$router->get('/about', 'HomeController@about');
 
 $router->get('/auth/register', 'UserController@create');
 $router->get('/auth/login', 'UserController@login');

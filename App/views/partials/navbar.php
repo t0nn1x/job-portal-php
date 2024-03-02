@@ -18,7 +18,9 @@
     </a>
     <?php if (Session::has('user')) : ?>
       <div class="nav-item nav-item nav-link active">
-        Welcome, <?= Session::get('user')['name'] ?>
+        <span style="font-family: 'Pacifico', cursive; font-size: 1.2rem;">
+          Welcome, <?= Session::get('user')['name'] ?>
+        </span>
       </div>
     <?php endif; ?>
     <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -26,16 +28,9 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <div class="navbar-nav ms-auto p-4 p-lg-0">
-        <a href="/" class="nav-item nav-link active">Home</a>
-        <a href="about.html" class="nav-item nav-link">About</a>
-        <div class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Jobs</a>
-          <div class="dropdown-menu rounded-0 m-0">
-            <a href="job-list.html" class="dropdown-item">Job List</a>
-            <a href="job-detail.html" class="dropdown-item">Job Detail</a>
-          </div>
-        </div>
-        <a href="contact.html" class="nav-item nav-link">Contact</a>
+        <a href="/" class="nav-item nav-link">Home</a>
+        <a href="/about" class="nav-item nav-link">About</a>
+        <a href="/listings" class="nav-item nav-link">Jobs</a>
 
         <?php if (Session::has('user')) : ?>
           <form action="/auth/logout" method="POST">

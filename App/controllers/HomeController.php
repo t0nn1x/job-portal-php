@@ -24,4 +24,8 @@ class HomeController {
       'listings' => $listings
     ]);
   }
+
+  public function about() {
+    loadView('about');
+  }
 }
