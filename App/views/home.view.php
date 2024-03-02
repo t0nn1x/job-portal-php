@@ -45,5 +45,6 @@
 </div>
 <!-- Jobs End -->
 
+<?php loadPartial('testimonial')?>
 
 <?php loadPartial('footer') ?>

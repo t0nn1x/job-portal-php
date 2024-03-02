@@ -268,8 +268,6 @@ class ListingController {
     public function update($id) {
         $userId = Session::get('user')['id'];
 
-        $listingData = $this->getNewListingData();
-
         // Check if the listing exists and belongs to the user
         if (!Authorization::isOwner($userId, $id)) {
             Session::setFlashMessage('error_message', 'You are not authorized to update this listing or the listing does not exist');
@@ -277,19 +275,27 @@ class ListingController {
             exit;
         }
 
-        $errors = $this->validateListingData($listingData);
+        // Fetch the current listing data
+        $listingData = $this->db->query('SELECT * FROM listings WHERE id = :id', ['id' => $id])->fetch();
 
-        if (!empty($errors)) {
-            $this->showEditViewWithErrors($errors, $listingData, $id);
-        } else {
-            // Handle image upload and compression
-            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $listingData['image'] = $this->uploadAndCompressImage($_FILES['image']);
+        try {
+            $newListingData = $this->getNewListingData();
+
+            $errors = $this->validateListingData($newListingData);
+
+            if (!empty($errors)) {
+                $this->showEditViewWithErrors($errors, $newListingData, $id);
+            } else {
+                $this->updateListingData($newListingData, $id);
+                Session::setFlashMessage('success_message', 'Listing updated successfully');
+                redirect('/listings/' . $id);
             }
-
-            $this->updateListingData($listingData, $id);
-            Session::setFlashMessage('success_message', 'Listing updated successfully');
-            redirect('/listings/' . $id);
+        } catch (\Exception $e) {
+            $errors['image'] = $e->getMessage();
+            // Convert the stdClass object to an array
+            $listingDataArray = get_object_vars($listingData);
+            // Use the current listing data in the catch block
+            $this->showEditViewWithErrors($errors, $listingDataArray, $id);
         }
     }
 
@@ -338,7 +344,7 @@ class ListingController {
       'requirements' => $listingData['requirements'],
       'benefits' => $listingData['benefits'],
       'employment_type' => $listingData['employmentType'],
-      'image' => $listingData['image'] // Add this line
+      'image' => $listingData['image'] 
     ];
 
     $this->db->query($sql, $bindings);
