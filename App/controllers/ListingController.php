@@ -20,25 +20,37 @@ class ListingController {
    *
    * @return void
    */
-    public function index() {
-        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'Featured';
+  public function index() {
+    $perPage = 10; 
+    $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $currentPage = max($currentPage, 1); 
+    $offset = ($currentPage - 1) * $perPage;
 
-        switch ($sort) {
-            case 'Full Time':
-            case 'Part Time':
-            case 'Remote':
-                $listings = $this->db->query('SELECT * FROM listings WHERE employment_type = :sort ORDER BY created_at DESC', ['sort' => $sort])->fetchAll();
-                break;
-            case 'Featured':
-            default:
-                $listings = $this->db->query('SELECT * FROM listings ORDER BY created_at DESC')->fetchAll();
-                break;
-        }
+    $sort = isset($_GET['sort']) ? $_GET['sort'] : 'Featured';
+    $bindings = ['perPage' => $perPage, 'offset' => $offset];
 
-        loadView('listings/index', [
-            'listings' => $listings
-        ]);
-    }
+      switch ($sort) {
+          case 'Full Time':
+          case 'Part Time':
+          case 'Remote':
+              $totalCount = $this->db->query('SELECT COUNT(*) FROM listings WHERE employment_type = :sort', ['sort' => $sort])->fetchColumn();
+              $listings = $this->db->query("SELECT * FROM listings WHERE employment_type = :sort ORDER BY created_at DESC LIMIT $perPage OFFSET $offset", ['sort' => $sort])->fetchAll();
+              break;
+          case 'Featured':
+          default:
+              $totalCount = $this->db->query('SELECT COUNT(*) FROM listings')->fetchColumn();
+              $listings = $this->db->query("SELECT * FROM listings ORDER BY created_at DESC LIMIT $perPage OFFSET $offset")->fetchAll();
+              break;
+      }
+
+    $totalPages = ceil($totalCount / $perPage);
+
+    loadView('listings/index', [
+      'listings' => $listings,
+      'currentPage' => $currentPage,
+      'totalPages' => $totalPages,
+    ]);
+  }
 
   /**
    * Create a new listing
@@ -54,26 +66,26 @@ class ListingController {
    *
    * @return void
    */
-    public function store() {
-        $newListingData = []; // Initialize the variable
+  public function store() {
+    $newListingData = []; // Initialize the variable
 
-        try {
-            $newListingData = $this->getNewListingData();
+    try {
+      $newListingData = $this->getNewListingData();
 
-            $errors = $this->validateListingData($newListingData);
+      $errors = $this->validateListingData($newListingData);
 
-            if (!empty($errors)) {
-                $this->showCreateViewWithErrors($errors, $newListingData);
-            } else {
-                $this->insertListingData($newListingData);
-                Session::setFlashMessage('success_message', 'Listing created successfully');
-                redirect('/listings');
-            }
-        } catch (\Exception $e) {
-            $errors['image'] = $e->getMessage();
-            $this->showCreateViewWithErrors($errors, $newListingData);
-        }
+      if (!empty($errors)) {
+        $this->showCreateViewWithErrors($errors, $newListingData);
+      } else {
+        $this->insertListingData($newListingData);
+        Session::setFlashMessage('success_message', 'Listing created successfully');
+        redirect('/listings');
+      }
+    } catch (\Exception $e) {
+      $errors['image'] = $e->getMessage();
+      $this->showCreateViewWithErrors($errors, $newListingData);
     }
+  }
 
   /**
    * Get the new listing data from the request
@@ -242,7 +254,7 @@ class ListingController {
    */
   public function edit($id) {
     $userId = Session::get('user')['id'];
-    
+
     $listing = $this->db->query('SELECT * FROM listings WHERE id = :id', ['id' => $id])->fetch();
 
     if (!$listing) {
@@ -265,39 +277,39 @@ class ListingController {
    * @param int $id
    * @return void
    */
-    public function update($id) {
-        $userId = Session::get('user')['id'];
+  public function update($id) {
+    $userId = Session::get('user')['id'];
 
-        // Check if the listing exists and belongs to the user
-        if (!Authorization::isOwner($userId, $id)) {
-            Session::setFlashMessage('error_message', 'You are not authorized to update this listing or the listing does not exist');
-            return redirect('/listings/' . $id);
-            exit;
-        }
-
-        // Fetch the current listing data
-        $listingData = $this->db->query('SELECT * FROM listings WHERE id = :id', ['id' => $id])->fetch();
-
-        try {
-            $newListingData = $this->getNewListingData();
-
-            $errors = $this->validateListingData($newListingData);
-
-            if (!empty($errors)) {
-                $this->showEditViewWithErrors($errors, $newListingData, $id);
-            } else {
-                $this->updateListingData($newListingData, $id);
-                Session::setFlashMessage('success_message', 'Listing updated successfully');
-                redirect('/listings/' . $id);
-            }
-        } catch (\Exception $e) {
-            $errors['image'] = $e->getMessage();
-            // Convert the stdClass object to an array
-            $listingDataArray = get_object_vars($listingData);
-            // Use the current listing data in the catch block
-            $this->showEditViewWithErrors($errors, $listingDataArray, $id);
-        }
+    // Check if the listing exists and belongs to the user
+    if (!Authorization::isOwner($userId, $id)) {
+      Session::setFlashMessage('error_message', 'You are not authorized to update this listing or the listing does not exist');
+      return redirect('/listings/' . $id);
+      exit;
     }
+
+    // Fetch the current listing data
+    $listingData = $this->db->query('SELECT * FROM listings WHERE id = :id', ['id' => $id])->fetch();
+
+    try {
+      $newListingData = $this->getNewListingData();
+
+      $errors = $this->validateListingData($newListingData);
+
+      if (!empty($errors)) {
+        $this->showEditViewWithErrors($errors, $newListingData, $id);
+      } else {
+        $this->updateListingData($newListingData, $id);
+        Session::setFlashMessage('success_message', 'Listing updated successfully');
+        redirect('/listings/' . $id);
+      }
+    } catch (\Exception $e) {
+      $errors['image'] = $e->getMessage();
+      // Convert the stdClass object to an array
+      $listingDataArray = get_object_vars($listingData);
+      // Use the current listing data in the catch block
+      $this->showEditViewWithErrors($errors, $listingDataArray, $id);
+    }
+  }
 
   /**
    * Show the edit view with errors
@@ -344,7 +356,7 @@ class ListingController {
       'requirements' => $listingData['requirements'],
       'benefits' => $listingData['benefits'],
       'employment_type' => $listingData['employmentType'],
-      'image' => $listingData['image'] 
+      'image' => $listingData['image']
     ];
 
     $this->db->query($sql, $bindings);
@@ -387,39 +399,39 @@ class ListingController {
    * @param array $file The uploaded file
    * @return string The path to the saved image
    */
-    private function uploadAndCompressImage($file) {
-        if ($file['error'] === UPLOAD_ERR_OK) {
-            $tmpName = $file['tmp_name'];
-            $fileName = uniqid() . '.jpg'; // Generate a unique name for the file
-            $destinationPath = basePath('public/uploads/') . $fileName;
+  private function uploadAndCompressImage($file) {
+    if ($file['error'] === UPLOAD_ERR_OK) {
+      $tmpName = $file['tmp_name'];
+      $fileName = uniqid() . '.jpg'; // Generate a unique name for the file
+      $destinationPath = basePath('public/uploads/') . $fileName;
 
-            // Get the image type
-            $imageInfo = getimagesize($tmpName);
-            $imageType = $imageInfo[2];
+      // Get the image type
+      $imageInfo = getimagesize($tmpName);
+      $imageType = $imageInfo[2];
 
-            // Compress and move the image
-            switch ($imageType) {
-                case IMAGETYPE_JPEG:
-                    $source = imagecreatefromjpeg($tmpName);
-                    imagejpeg($source, $destinationPath, 75); // 75 is the quality setting
-                    break;
-                case IMAGETYPE_PNG:
-                    $source = imagecreatefrompng($tmpName);
-                    imagesavealpha($source, true); // save alphablending setting (important)
-                    imagepng($source, $destinationPath, 9); // 9 is the compression level (0 no compression, 9 maximum)
-                    break;
-                case IMAGETYPE_GIF:
-                    $source = imagecreatefromgif($tmpName);
-                    imagegif($source, $destinationPath);
-                    break;
-                default:
-                    throw new \Exception('Invalid image type');
-            }
+      // Compress and move the image
+      switch ($imageType) {
+        case IMAGETYPE_JPEG:
+          $source = imagecreatefromjpeg($tmpName);
+          imagejpeg($source, $destinationPath, 75); // 75 is the quality setting
+          break;
+        case IMAGETYPE_PNG:
+          $source = imagecreatefrompng($tmpName);
+          imagesavealpha($source, true); // save alphablending setting (important)
+          imagepng($source, $destinationPath, 9); // 9 is the compression level (0 no compression, 9 maximum)
+          break;
+        case IMAGETYPE_GIF:
+          $source = imagecreatefromgif($tmpName);
+          imagegif($source, $destinationPath);
+          break;
+        default:
+          throw new \Exception('Invalid image type');
+      }
 
-            return 'uploads/' . $fileName;
-        }
-
-        // Return a default image if upload failed or not provided
-        return 'uploads/default.jpg';
+      return 'uploads/' . $fileName;
     }
-} 
+
+    // Return a default image if upload failed or not provided
+    return 'uploads/default.jpg';
+  }
+}
