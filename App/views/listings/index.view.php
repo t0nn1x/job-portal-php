@@ -37,6 +37,19 @@
           <?php endforeach; ?>
         </div>
       </div>
+      <div class="pagination flex items-center justify-center mt-8">
+        <?php if ($currentPage > 1) : ?>
+          <a href="/listings?page=<?= $currentPage - 1 ?>" class="text-gray-500 hover:text-gray-700 mr-2">&laquo; Previous</a>
+        <?php endif; ?>
+
+        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+          <a href="/listings?page=<?= $i ?>" class="<?= $i == $currentPage ? 'bg-green-500 text-white' : 'text-gray-500 hover:text-gray-700' ?> px-4 py-2 mx-1 rounded"><?= $i ?></a>
+        <?php endfor; ?>
+
+        <?php if ($currentPage < $totalPages) : ?>
+          <a href="/listings?page=<?= $currentPage + 1 ?>" class="text-gray-500 hover:text-gray-700 ml-2">Next &raquo;</a>
+        <?php endif; ?>
+      </div>
     </div>
   </div>
 </div>
