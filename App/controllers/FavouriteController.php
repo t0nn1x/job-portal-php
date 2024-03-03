@@ -13,6 +13,26 @@ class FavouriteController {
     $this->db = new Database($config);
   }
 
+  public function toggle() {
+    $userId = Session::get('user')['id'];
+    $listingId = $_POST['listing_id'];
+
+    // Check if already favourited
+    $exists = $this->db->query('SELECT 1 FROM user_favourites WHERE user_id = :user_id AND listing_id = :listing_id', ['user_id' => $userId, 'listing_id' => $listingId])->fetchColumn();
+
+    if ($exists) {
+      // Remove from favourites
+      $this->db->query('DELETE FROM user_favourites WHERE user_id = :user_id AND listing_id = :listing_id', ['user_id' => $userId, 'listing_id' => $listingId]);
+    } else {
+      // Add to favourites
+      $this->db->query('INSERT INTO user_favourites (user_id, listing_id) VALUES (:user_id, :listing_id)', ['user_id' => $userId, 'listing_id' => $listingId]);
+    }
+
+    // Since this is an AJAX request, you might return a JSON response
+    echo json_encode(['success' => true]);
+    exit;
+  }
+
   public function add() {
     $userId = Session::get('user')['id'];
     $listingId = $_POST['listing_id'];

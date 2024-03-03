@@ -6,6 +6,7 @@ use Framework\Authorization;
 use Framework\Database;
 use Framework\Session;
 use Framework\Validation;
+use PDO;
 
 class ListingController {
   protected $db;
