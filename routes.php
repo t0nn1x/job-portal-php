@@ -17,4 +17,5 @@ $router->post('/auth/logout', 'UserController@logout');
 $router->post('/auth/login', 'UserController@authenticate');
 
 $router->post('/favourites/toggle', 'FavouriteController@toggle', ['auth']);
+$router->get('/favourites', 'FavouriteController@index', ['auth']);
 

@@ -46,10 +46,17 @@ class ListingController {
 
     $totalPages = ceil($totalCount / $perPage);
 
+    $userId = Session::get('user')['id'] ?? null;
+    $userFavourites = [];
+    if ($userId) {
+      $userFavourites = $this->db->query('SELECT listing_id FROM user_favourites WHERE user_id = :user_id', ['user_id' => $userId])->fetchAll(PDO::FETCH_COLUMN);
+    }
+
     loadView('listings/index', [
       'listings' => $listings,
       'currentPage' => $currentPage,
       'totalPages' => $totalPages,
+      'userFavourites' => $userFavourites,
     ]);
   }
 

@@ -33,6 +33,7 @@
         <a href="/listings" class="nav-item nav-link">Jobs</a>
 
         <?php if (Session::has('user')) : ?>
+          <a href="/favourites" class="nav-item nav-link">My Favourites</a>
           <form action="/auth/logout" method="POST">
             <button type="submit" class="nav-item nav-link active" style="color: red; font-weight: bold;">Logout</button>
           </form>

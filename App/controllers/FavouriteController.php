@@ -13,6 +13,18 @@ class FavouriteController {
     $this->db = new Database($config);
   }
 
+  public function index() {
+    $userId = Session::get('user')['id'];
+    $favourites = $this->db->query(
+      'SELECT listings.* FROM listings
+      JOIN user_favourites ON listings.id = user_favourites.listing_id
+      WHERE user_favourites.user_id = :user_id',
+      ['user_id' => $userId]
+    )->fetchAll();
+
+    loadView('favourites/index', ['favourites' => $favourites]);
+  }
+
   public function toggle() {
     $userId = Session::get('user')['id'];
     $listingId = $_POST['listing_id'];

@@ -29,9 +29,13 @@
                 </div>
                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                   <div class="d-flex mb-3">
-                    <button type="button" class="btn btn-light btn-square me-3 favourite-btn" id="favourite-btn-<?= $listing->id ?>" onclick="toggleFavourite(<?= $listing->id ?>)" data-favourited="false">
-                      <i class="far fa-heart text-primary"></i>
+                    <?php
+                    $isFavourited = in_array($listing->id, $userFavourites);
+                    ?>
+                    <button type="button" class="btn btn-light btn-square me-3 favourite-btn" id="favourite-btn-<?= $listing->id ?>" onclick="toggleFavourite(<?= $listing->id ?>)" data-favourited="<?= $isFavourited ? 'true' : 'false' ?>">
+                      <i class="<?= $isFavourited ? 'fas' : 'far' ?> fa-heart text-primary"></i>
                     </button>
+
                     <a class="btn btn-primary" href="/listings/<?= $listing->id ?>">Apply Now</a>
                   </div>
                   <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>Posted: <?= $listing->created_at ?></small>
@@ -47,35 +51,7 @@
 </div>
 <!-- Jobs End -->
 
-<script>
-  function toggleFavourite(listingId) {
-    var btn = document.getElementById('favourite-btn-' + listingId);
-    var isFavourited = btn.getAttribute('data-favourited') === 'true';
-
-    // Toggle the favourited status visually
-    if (isFavourited) {
-      btn.innerHTML = '<i class="far fa-heart text-primary"></i>';
-    } else {
-      btn.innerHTML = '<i class="fas fa-heart text-primary"></i>';
-    }
-    btn.setAttribute('data-favourited', !isFavourited);
-
-    // Send AJAX request to the server
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/favourites/toggle', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function() {
-      if (this.status === 200) {
-        // Handle success
-        console.log('Favourite toggled successfully');
-      } else {
-        // Handle error
-        console.log('Error toggling favourite');
-      }
-    };
-    xhr.send('listing_id=' + listingId);
-  }
-</script>
+<?php loadPartial('favouriteScript') ?>
 
 <?php loadPartial('testimonial') ?>
 

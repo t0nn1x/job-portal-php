@@ -1,19 +1,13 @@
 <?php loadPartial('head') ?>
-
 <?php loadPartial('navbar') ?>
 
-<?php loadPartial('search') ?>
-
-<!-- Jobs Start -->
 <div class="container-xxl py-5">
   <div class="container">
-    <h1 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Job Listing</h1>
-    <?= loadPartial('message') ?>
+    <h1 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">My Favourite Jobs</h1>
     <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.3s">
-      <?php loadPartial('sort'); ?>
       <div class="tab-content">
         <div id="tab-1" class="tab-pane fade show p-0 active">
-          <?php foreach ($listings as $listing) : ?>
+          <?php foreach ($favourites as $listing) : ?>
             <div class="job-item p-4 mb-4">
               <div class="row g-4">
                 <div class="col-sm-12 col-md-8 d-flex align-items-center">
@@ -27,13 +21,7 @@
                 </div>
                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                   <div class="d-flex mb-3">
-                    <?php
-                    $isFavourited = in_array($listing->id, $userFavourites);
-                    ?>
-                    <button type="button" class="btn btn-light btn-square me-3 favourite-btn" id="favourite-btn-<?= $listing->id ?>" onclick="toggleFavourite(<?= $listing->id ?>)" data-favourited="<?= $isFavourited ? 'true' : 'false' ?>">
-                      <i class="<?= $isFavourited ? 'fas' : 'far' ?> fa-heart text-primary"></i>
-                    </button>
-                    <a class="btn btn-primary" href="/listings/<?= $listing->id ?>">Apply Now</a>
+                    <a class="btn btn-primary" href="/listings/<?= $listing->id ?>">View Job</a>
                   </div>
                   <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>Posted: <?= $listing->created_at ?></small>
                 </div>
@@ -42,25 +30,8 @@
           <?php endforeach; ?>
         </div>
       </div>
-      <div class="pagination flex items-center justify-center mt-8">
-        <?php if ($currentPage > 1) : ?>
-          <a href="/listings?page=<?= $currentPage - 1 ?>" class="text-gray-500 hover:text-gray-700 mr-2">&laquo; Previous</a>
-        <?php endif; ?>
-
-        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
-          <a href="/listings?page=<?= $i ?>" class="<?= $i == $currentPage ? 'bg-green-500 text-white' : 'text-gray-500 hover:text-gray-700' ?> px-4 py-2 mx-1 rounded"><?= $i ?></a>
-        <?php endfor; ?>
-
-        <?php if ($currentPage < $totalPages) : ?>
-          <a href="/listings?page=<?= $currentPage + 1 ?>" class="text-gray-500 hover:text-gray-700 ml-2">Next &raquo;</a>
-        <?php endif; ?>
-      </div>
     </div>
   </div>
 </div>
-<!-- Jobs End -->
-
-
-<?php loadPartial('favouriteScript') ?>
 
 <?php loadPartial('footer') ?>
