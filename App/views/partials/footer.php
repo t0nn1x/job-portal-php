@@ -44,7 +44,7 @@
     <div class="copyright">
       <div class="row">
         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-          &copy; <a class="border-bottom" href="#">Job Entry</a>, All Right Reserved.
+          &copy; <a class="border-bottom" href="#">JobJunction</a>, All Right Reserved.
           Created by <a class="border-bottom" href="https://www.linkedin.com/in/anton-khrobust-4426b126a/">Anton Khrobust</a>
         </div>
         <div class="col-md-6 text-center text-md-end">
