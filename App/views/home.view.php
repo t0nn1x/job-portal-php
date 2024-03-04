@@ -29,7 +29,13 @@
                 </div>
                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                   <div class="d-flex mb-3">
-                    <a class="btn btn-light btn-square me-3" href=""><i class="far fa-heart text-primary"></i></a>
+                    <?php
+                    $isFavourited = in_array($listing->id, $userFavourites);
+                    ?>
+                    <button type="button" class="btn btn-light btn-square me-3 favourite-btn" id="favourite-btn-<?= $listing->id ?>" onclick="toggleFavourite(<?= $listing->id ?>)" data-favourited="<?= $isFavourited ? 'true' : 'false' ?>">
+                      <i class="<?= $isFavourited ? 'fas' : 'far' ?> fa-heart text-primary"></i>
+                    </button>
+
                     <a class="btn btn-primary" href="/listings/<?= $listing->id ?>">Apply Now</a>
                   </div>
                   <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>Posted: <?= $listing->created_at ?></small>
@@ -45,6 +51,8 @@
 </div>
 <!-- Jobs End -->
 
-<?php loadPartial('testimonial')?>
+<?php loadPartial('favouriteScript') ?>
+
+<?php loadPartial('testimonial') ?>
 
 <?php loadPartial('footer') ?>
