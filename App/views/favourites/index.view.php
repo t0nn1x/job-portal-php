@@ -21,6 +21,9 @@
                 </div>
                 <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                   <div class="d-flex mb-3">
+                    <button type="button" class="btn btn-light btn-square me-3 favourite-btn" id="favourite-btn-<?= $listing->id ?>" onclick="toggleFavourite(<?= $listing->id ?>)" data-favourited="true">
+                      <i class="fas fa-heart text-primary"></i>
+                    </button>
                     <a class="btn btn-primary" href="/listings/<?= $listing->id ?>">View Job</a>
                   </div>
                   <small class="text-truncate"><i class="far fa-calendar-alt text-primary me-2"></i>Posted: <?= $listing->created_at ?></small>
@@ -33,5 +36,7 @@
     </div>
   </div>
 </div>
+
+<?php loadPartial('favouriteScript') ?>
 
 <?php loadPartial('footer') ?>

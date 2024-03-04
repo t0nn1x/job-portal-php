@@ -33,15 +33,12 @@ class FavouriteController {
     $exists = $this->db->query('SELECT 1 FROM user_favourites WHERE user_id = :user_id AND listing_id = :listing_id', ['user_id' => $userId, 'listing_id' => $listingId])->fetchColumn();
 
     if ($exists) {
-      // Remove from favourites
       $this->db->query('DELETE FROM user_favourites WHERE user_id = :user_id AND listing_id = :listing_id', ['user_id' => $userId, 'listing_id' => $listingId]);
     } else {
-      // Add to favourites
       $this->db->query('INSERT INTO user_favourites (user_id, listing_id) VALUES (:user_id, :listing_id)', ['user_id' => $userId, 'listing_id' => $listingId]);
     }
 
-    // Since this is an AJAX request, you might return a JSON response
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true, 'favourited' => !$exists]);
     exit;
   }
 

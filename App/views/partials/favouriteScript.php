@@ -17,10 +17,16 @@
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
       if (this.status === 200) {
-        // Handle success
-        console.log('Favourite toggled successfully');
+        var response = JSON.parse(this.responseText);
+        var btn = document.getElementById('favourite-btn-' + listingId);
+        if (response.favourited) {
+          btn.innerHTML = '<i class="fas fa-heart text-primary"></i>';
+          btn.setAttribute('data-favourited', 'true');
+        } else {
+          btn.innerHTML = '<i class="far fa-heart text-primary"></i>';
+          btn.setAttribute('data-favourited', 'false');
+        }
       } else {
-        // Handle error
         console.log('Error toggling favourite');
       }
     };
