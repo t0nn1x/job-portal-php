@@ -19,3 +19,4 @@ $router->post('/auth/login', 'UserController@authenticate');
 $router->post('/favourites/toggle', 'FavouriteController@toggle', ['auth']);
 $router->get('/favourites', 'FavouriteController@index', ['auth']);
 
+$router->post('/apply', 'ApplicationController@store');

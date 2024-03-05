@@ -114,7 +114,7 @@ class ListingController {
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
       $newListingData['image'] = $this->uploadAndCompressImage($_FILES['image']);
     } else {
-      $newListingData['image'] = 'uploads/default.jpg'; // Set default image path
+      $newListingData['image'] = 'uploads/images/default.jpg'; // Set default image path
     }
 
     $newListingData['user_id'] = Session::get('user')['id'];
@@ -411,7 +411,7 @@ class ListingController {
     if ($file['error'] === UPLOAD_ERR_OK) {
       $tmpName = $file['tmp_name'];
       $fileName = uniqid() . '.jpg'; // Generate a unique name for the file
-      $destinationPath = basePath('public/uploads/') . $fileName;
+      $destinationPath = basePath('public/uploads/images/') . $fileName;
 
       // Get the image type
       $imageInfo = getimagesize($tmpName);
@@ -436,10 +436,10 @@ class ListingController {
           throw new \Exception('Invalid image type');
       }
 
-      return 'uploads/' . $fileName;
+      return 'uploads/images/' . $fileName;
     }
 
     // Return a default image if upload failed or not provided
-    return 'uploads/default.jpg';
+    return 'uploads/images/default.jpg';
   }
 }
