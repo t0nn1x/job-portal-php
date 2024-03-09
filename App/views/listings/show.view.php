@@ -27,25 +27,25 @@
           <h4 class="mb-3">Benefits</h4>
           <p><?= $listing->benefits ?></p>
         </div>
-
         <div class="">
           <h4 class="mb-4">Apply For The Job</h4>
-          <form>
+          <form action="/apply" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="listing_id" value="<?= $listing->id ?>">
             <div class="row g-3">
               <div class="col-12 col-sm-6">
-                <input type="text" class="form-control" placeholder="Your Name">
+                <input type="text" class="form-control" name="name" placeholder="Your Name">
               </div>
               <div class="col-12 col-sm-6">
-                <input type="email" class="form-control" placeholder="Your Email">
+                <input type="email" class="form-control" name="email" placeholder="Your Email">
               </div>
               <div class="col-12 col-sm-6">
-                <input type="text" class="form-control" placeholder="Portfolio Website">
+                <input type="text" class="form-control" name="portfolio_website" placeholder="Portfolio Website">
               </div>
               <div class="col-12 col-sm-6">
-                <input type="file" class="form-control bg-white">
+                <input type="file" class="form-control bg-white" name="resume">
               </div>
               <div class="col-12">
-                <textarea class="form-control" rows="5" placeholder="Coverletter"></textarea>
+                <textarea class="form-control" name="coverletter" rows="5" placeholder="Cover Letter"></textarea>
               </div>
               <div class="col-12">
                 <button class="btn btn-primary w-100" type="submit">Apply Now</button>

@@ -9,12 +9,21 @@
 
   <?php
 
-  use Framework\Session; ?>
+  use App\Controllers\ListingController;
+  use Framework\Session;
+  // Assuming $listingController is an instance of ListingController
+  $listingController = new ListingController();
+  $userId = Session::get('user')['id'] ?? null;
+  $hasListings = false;
+  if ($userId) {
+    $hasListings = $listingController->userHasListings($userId);
+  }
+  ?>
 
   <!-- Navbar Start -->
   <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
     <a href="/" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
-      <h1 class="m-0 text-primary">JobEntry</h1>
+      <h1 class="m-0 text-primary">JobJunction</h1>
     </a>
     <?php if (Session::has('user')) : ?>
       <div class="nav-item nav-item nav-link active">
@@ -33,6 +42,9 @@
         <a href="/listings" class="nav-item nav-link">Jobs</a>
 
         <?php if (Session::has('user')) : ?>
+          <?php if ($hasListings) : ?>
+            <a href="/applications" class="nav-item nav-link">My Applications</a>
+          <?php endif; ?>
           <a href="/favourites" class="nav-item nav-link">My Favourites</a>
           <form action="/auth/logout" method="POST">
             <button type="submit" class="nav-item nav-link active" style="color: red; font-weight: bold;">Logout</button>
