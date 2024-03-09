@@ -22,5 +22,5 @@ $method = $_SERVER['REQUEST_METHOD'];
 // Route the request
 $router->route($uri, $method);
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
