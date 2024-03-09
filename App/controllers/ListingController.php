@@ -22,27 +22,27 @@ class ListingController {
    * @return void
    */
   public function index() {
-    $perPage = 10; 
+    $perPage = 10;
     $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $currentPage = max($currentPage, 1); 
+    $currentPage = max($currentPage, 1);
     $offset = ($currentPage - 1) * $perPage;
 
     $sort = isset($_GET['sort']) ? $_GET['sort'] : 'Featured';
     $bindings = ['perPage' => $perPage, 'offset' => $offset];
 
-      switch ($sort) {
-          case 'Full Time':
-          case 'Part Time':
-          case 'Remote':
-              $totalCount = $this->db->query('SELECT COUNT(*) FROM listings WHERE employment_type = :sort', ['sort' => $sort])->fetchColumn();
-              $listings = $this->db->query("SELECT * FROM listings WHERE employment_type = :sort ORDER BY created_at DESC LIMIT $perPage OFFSET $offset", ['sort' => $sort])->fetchAll();
-              break;
-          case 'Featured':
-          default:
-              $totalCount = $this->db->query('SELECT COUNT(*) FROM listings')->fetchColumn();
-              $listings = $this->db->query("SELECT * FROM listings ORDER BY created_at DESC LIMIT $perPage OFFSET $offset")->fetchAll();
-              break;
-      }
+    switch ($sort) {
+      case 'Full Time':
+      case 'Part Time':
+      case 'Remote':
+        $totalCount = $this->db->query('SELECT COUNT(*) FROM listings WHERE employment_type = :sort', ['sort' => $sort])->fetchColumn();
+        $listings = $this->db->query("SELECT * FROM listings WHERE employment_type = :sort ORDER BY created_at DESC LIMIT $perPage OFFSET $offset", ['sort' => $sort])->fetchAll();
+        break;
+      case 'Featured':
+      default:
+        $totalCount = $this->db->query('SELECT COUNT(*) FROM listings')->fetchColumn();
+        $listings = $this->db->query("SELECT * FROM listings ORDER BY created_at DESC LIMIT $perPage OFFSET $offset")->fetchAll();
+        break;
+    }
 
     $totalPages = ceil($totalCount / $perPage);
 
@@ -441,5 +441,62 @@ class ListingController {
 
     // Return a default image if upload failed or not provided
     return 'uploads/images/default.jpg';
+  }
+
+  public function viewAllApplications() {
+    $userId = Session::get('user')['id'];
+
+    // Fetch the listings IDs owned by the user
+    $listings = $this->db->query('SELECT id FROM listings WHERE user_id = :user_id', ['user_id' => $userId])->fetchAll(PDO::FETCH_COLUMN);
+
+    if (empty($listings)) {
+      Session::setFlashMessage('error_message', 'You do not own any listings.');
+      return redirect('/listings');
+    }
+
+    $parameters = array_values($listings);
+    $placeholders = implode(',', array_fill(0, count($listings), '?'));
+
+    // Determine the number of applications per page
+    $perPage = 10;
+
+    // Calculate the total number of pages
+    $totalCount = $this->db->query("SELECT COUNT(*) FROM applications WHERE listing_id IN ($placeholders)", $parameters)->fetchColumn();
+    $totalPages = ceil($totalCount / $perPage);
+
+    // Get the current page number from the query string
+    $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $currentPage = max($currentPage, 1);
+
+    // Calculate the offset for the SQL query
+    $offset = ($currentPage - 1) * $perPage;
+
+    $applications = $this->db->query(
+      "SELECT applications.*, listings.title AS listing_title
+    FROM applications
+    LEFT JOIN listings ON applications.listing_id = listings.id
+    WHERE listing_id IN ($placeholders)
+    ORDER BY applications.created_at DESC
+    LIMIT $perPage OFFSET $offset",
+      $parameters
+    )->fetchAll();
+
+    // Display the applications to the employer
+    loadView('listings/applications', [
+      'applications' => $applications,
+      'currentPage' => $currentPage,
+      'totalPages' => $totalPages,
+    ]);
+  }
+
+  /**
+   * Check if the user has any listings
+   *
+   * @param int $userId
+   * @return bool
+   */
+  public function userHasListings($userId) {
+    $count = $this->db->query("SELECT COUNT(*) FROM listings WHERE user_id = :user_id", ['user_id' => $userId])->fetchColumn();
+    return $count > 0;
   }
 }

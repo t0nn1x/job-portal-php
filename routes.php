@@ -20,3 +20,4 @@ $router->post('/favourites/toggle', 'FavouriteController@toggle', ['auth']);
 $router->get('/favourites', 'FavouriteController@index', ['auth']);
 
 $router->post('/apply', 'ApplicationController@store');
+$router->get('/applications', 'ListingController@viewAllApplications', ['auth']);
